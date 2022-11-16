@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yuanqing Wu">
+<meta name="dcterms.date" content="2023-02-08">
+<meta name="description" content="求任意函数的微分是数值方法中很重要的一个内容, 不同于计算物理中常用的简单数值微分, 这里我们介绍在ML等领域中常用的另一种微分方式: 自动微分">
+
+<title>blogs - 自动微分(Automatic Differentiation)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blogs</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">自动微分(Automatic Differentiation)</h1>
+                  <div>
+        <div class="description">
+          求任意函数的微分是数值方法中很重要的一个内容, 不同于计算物理中常用的简单数值微分, 这里我们介绍在ML等领域中常用的另一种微分方式: 自动微分
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yuanqing Wu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 8, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="自动微分automatic-differentiation" class="level1">
+<h1>自动微分(Automatic Differentiation)</h1>
+<section id="微分算法" class="level2">
+<h2 class="anchored" data-anchor-id="微分算法">微分算法</h2>
+<p>对于几乎所有最优化方法来说, 最基础的一步就是求任意函数的微分. 例如梯度下降法(Gradient Descent). 因此, 微分算法的重要性自然不言而喻. 目前, 一共存在四种微分算法: * 手动微分(Manual Differentiation), 即手动求出函数的微分, 并直接编码进代码里. * 数值微分(Numerical Differentiation). 顾名思义, 求解任意函数在某一点的微分的数值解. * 符号微分(Symbolic Differentiation). 即Mathematica中提供的微分, 给出任意函数微分的解析表达式. * 自动微分(Automatic Differentiation).</p>
+<p>其中手动微分由于每次修改模型, 我们都需要更改求解梯度的代码, 并且对于维度较高的函数编码量很大, 因此较少采用, 我们在此也不会涉及.</p>
+<section id="数值微分numerical-differentiation" class="level3">
+<h3 class="anchored" data-anchor-id="数值微分numerical-differentiation">数值微分(Numerical Differentiation)</h3>
+<p>数值微分是最简单的一种计算微分的方法, 原理就是基于微分的定义: <span class="math display">\[ f'(x) = \lim_{\epsilon \to 0} \frac{f(x+\epsilon) - f(x)}{\epsilon}\]</span> 我们将<span class="math inline">\(\epsilon\)</span> 取一个极小值(例如<span class="math inline">\(0.00001\)</span>), 代入计算即可得到数值微分. 较为常用的是中心差分法: <span class="math display">\[ f'(x) = \lim_{\epsilon \to 0} \frac{f(x+\epsilon) - f(x-\epsilon)}{2 \epsilon} \]</span> 数值微分的优点是<strong>编码非常容易</strong>, 但缺点也很明显:<strong>第一, 计算量很大, 计算梯度时对于每个变量都需要计算两次函数值; 第二, 误差较大, 这一点在计算物理/数值方法课上应该都有过详细的讨论</strong>.</p>
+</section>
+<section id="符号微分symbolic-differentiation" class="level3">
+<h3 class="anchored" data-anchor-id="符号微分symbolic-differentiation">符号微分(Symbolic Differentiation)</h3>
+<p>符号微分即求得函数的微分的解析表达式. 其优点在于得到<strong>是精确解, 并且只需要求解一次表达式, 函数各点的微分都可以得到</strong>, 而缺点也很明显, <strong>第一, 随着函数表达式复杂度的上升, 得到的微分解析式复杂度可能极速膨胀, 即所谓的”表达式膨胀”(expression swell)问题; 第二, 符号微分只能求解具有数学表达式形式的函数, 但很多时候我们使用的函数并不具有一个显式的表达式形式; 第三, 符号微分难以求解存在不可微点的函数.</strong></p>
+</section>
+<section id="自动微分automatic-differentiation-1" class="level3">
+<h3 class="anchored" data-anchor-id="自动微分automatic-differentiation-1">自动微分(Automatic Differentiation)</h3>
+<p>终于到了今天的主角, 自动微分. 自动微分的想法其实可以看作手动微分和数值微分的结合: 由于绝大多数函数的微分都可以通过查表得到, 因此我们只需要实现对几个基本函数的手动微分, 之后利用链式法则, 每步都带入数值求解, 就能实现对于任意函数的精确微分了.<br>
+自动微分是目前综合性能最好的微分算法, 同时具有精确求解, 速度快, 可求解含有逻辑控制语句与部分不可微的函数等优点.</p>
+</section>
+</section>
+<section id="自动微分-forward-mode" class="level2">
+<h2 class="anchored" data-anchor-id="自动微分-forward-mode">自动微分-Forward Mode</h2>
+<p>我们从一个例子开始讲解前向的自动微分算法.<br>
+考虑函数: <span class="math display">\[ f(x_1, x_2) = \ln (x_1) + x_1 x_2 -\sin(x_2) \]</span> 可以将其转化为如下的AST形式 <img src="https://image.yqwu.site/i/2021-08-17-01-20-17.png" class="img-fluid" alt="2021-08-17-01-20-17"> 各节点分别为: * <span class="math inline">\(v_{-1}\)</span> :<span class="math inline">\(x_1\)</span> * <span class="math inline">\(v_0\)</span> :<span class="math inline">\(x_2\)</span> * <span class="math inline">\(v_1\)</span> :<span class="math inline">\(\ln v_{-1}\)</span> * <span class="math inline">\(v_2\)</span> :<span class="math inline">\(v_{-1}\times v_0\)</span> * <span class="math inline">\(v_3\)</span> :<span class="math inline">\(\sin v_0\)</span> * <span class="math inline">\(v_4\)</span> :<span class="math inline">\(v_1 + v_2\)</span> * <span class="math inline">\(v_5\)</span> :<span class="math inline">\(v_4+v_3\)</span><br>
+之后, 就可以很轻松的求解函数在各步的函数值与导数值, 如下表所示. <img src="https://image.yqwu.site/i/2021-08-17-01-20-57.png" class="img-fluid" alt="2021-08-17-01-20-57"> 实现前向自动微分最简单的方法就是<em>Dual Number</em>法. 其核心思想是用<span class="math inline">\(x+\epsilon\)</span>替换 <span class="math inline">\(x\)</span>作为输入, 利用Taylor展开: <span class="math display">\[ f(x+b \epsilon) = f(x) + f'(x)b \epsilon \]</span> 例如, 我们需要求解<span class="math inline">\(\frac{\partial f}{\partial x_1}\)</span>, 则将<span class="math inline">\(v_{-1}\)</span> 从<span class="math inline">\(x_1\)</span>改为<span class="math inline">\(x_1 + \epsilon\)</span>. 之后, 我们需要实现各种基本函数下<span class="math inline">\(\epsilon\)</span> 的作用率, 例如: * <span class="math inline">\((a+b \epsilon) + (c+ d \epsilon) = (a+c) + (b+d) \epsilon\)</span> * <span class="math inline">\((a+b \epsilon)\times (c+d \epsilon) = ac + (bc+ ad)\epsilon\)</span> * <span class="math inline">\(\ln (a+b \epsilon) = \ln a + \frac{b}{a}\epsilon\)</span> * <span class="math inline">\(\sin (a+b \epsilon) = \sin(a)+ \cos (a) b \epsilon\)</span><br>
+之后, 依次计算各个节点: * <span class="math inline">\(v_{-1} = 2 + \epsilon\)</span> * <span class="math inline">\(v_0 = 5\)</span> * <span class="math inline">\(v_1 = \ln 2 + \frac{\epsilon}{2}\)</span> * <span class="math inline">\(v_2 = 10 + 5 \epsilon\)</span> * <span class="math inline">\(v_3 = \sin 5\)</span> * <span class="math inline">\(v_4 = 10 + \ln 2 + \frac{11 \epsilon}{2} \approx 10.693 + 5.5 \epsilon\)</span> * <span class="math inline">\(v_5 = 10.693 + \sin 5 + 5.5 \epsilon \approx 11.652 + 5.5 \epsilon\)</span></p>
+<p>由此, 我们得到了在<span class="math inline">\((x_1=2, x_2=5)\)</span>处, 函数值为<span class="math inline">\(10.693\)</span>, 对<span class="math inline">\(x_1\)</span>的导数值为<span class="math inline">\(5.5\)</span>.<br>
+代码上的实现也是很简单的, 我们只要构造Dual Number类型:</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> DualNumber <span class="op">&lt;:</span><span class="dt"> Number</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">::</span><span class="dt">Float64</span>;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    ϵ<span class="op">::</span><span class="dt">Float64</span>;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后将各个基本函数重载(这里我们只重载了几个需要的函数):</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 重载运算符, 实现对DualNumber的运算</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="op">:</span><span class="fu">+</span>(x<span class="op">::</span><span class="dt">DualNumber</span>, y<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(x.a <span class="op">+</span> y.a, x.ϵ <span class="op">+</span> y.ϵ);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="op">:</span><span class="fu">-</span>(x<span class="op">::</span><span class="dt">DualNumber</span>, y<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(x.a <span class="op">-</span> y.a, x.ϵ <span class="op">-</span> y.ϵ);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="op">:</span><span class="fu">*</span>(x<span class="op">::</span><span class="dt">DualNumber</span>, y<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(x.a <span class="op">*</span> y.a, x.ϵ <span class="op">*</span> y.a <span class="op">+</span> x.a <span class="op">*</span> y.ϵ);</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">log</span>(x<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(<span class="fu">log</span>(x.a), x.ϵ<span class="op">/</span>x.a);</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">sin</span>(x<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(<span class="fu">sin</span>(x.a), <span class="fu">cos</span>(x.a) <span class="op">*</span> x.ϵ);</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">tan</span>(x<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(<span class="fu">tan</span>(x.a), <span class="fu">sec</span>(x.a)<span class="op">^</span><span class="fl">2</span><span class="op">*</span>x.ϵ);</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">sqrt</span>(x<span class="op">::</span><span class="dt">DualNumber</span>) <span class="op">=</span> <span class="fu">DualNumber</span>(<span class="fu">sqrt</span>(x.a), x.ϵ<span class="op">/</span>(<span class="fl">2</span><span class="fu">*sqrt</span>(x.a)));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>实现前向自动微分的过程之后就相当简单了:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">FowardAD</span>(f, v<span class="op">::</span><span class="dt">Vector{Float64}</span>)<span class="op">::</span><span class="dt">Vector{Float64}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> <span class="dt">Float64</span>[]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(v)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        dualV <span class="op">=</span> <span class="fu">map</span>(x<span class="op">-&gt;</span>x<span class="op">==</span>i ? <span class="fu">DualNumber</span>(v[x], <span class="fl">1</span>) <span class="op">:</span> <span class="fu">DualNumber</span>(v[x], <span class="fl">0</span>), <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(v));</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">push!</span>(grad, <span class="fu">f</span>(dualV).ϵ)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    grad</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>FowardAD (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>你很快就能发现我们这么做的优点:<strong>我们不需要对代码做任何更改, 我们可以接受并求解任何一个你能定义的函数</strong>. <code>FowardAD</code>函数接受一个任意的函数<span class="math inline">\(f\)</span>, 与一个<span class="math inline">\(n\)</span>维的向量<span class="math inline">\([v_1, v_2,\cdots,v_{n}]\)</span>, 返回<span class="math inline">\(f\)</span>在 <span class="math inline">\(v\)</span>处的梯度 <span class="math inline">\([\partial f/\partial v_i]\)</span>.<br>
+下面是两个例子</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">g</span>(x) <span class="op">=</span> <span class="fu">log</span>(x[<span class="fl">1</span>]) <span class="op">+</span> x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>] <span class="op">-</span> <span class="fu">sin</span>(x[<span class="fl">2</span>])</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> <span class="fu">sum</span>(sin, x) <span class="op">+</span> <span class="fu">prod</span>(tan, x) <span class="op">*</span> <span class="fu">sum</span>(sqrt, x);</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [<span class="fl">2</span>., <span class="fl">5</span>.]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> [<span class="fl">0.986403</span>, <span class="fl">0.140913</span>, <span class="fl">0.294963</span>, <span class="fl">0.837125</span>, <span class="fl">0.650451</span>];</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="fu">FowardAD</span>(f, x));</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="fu">FowardAD</span>(g, y));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1.0135827245997349, 2.500134089883427, 1.7257370110780195, 1.1013890171195015, 1.2445004882356923]
+[5.5, 1.7163378145367738]</code></pre>
+</div>
+</div>
+<p>可以看出, 对于<span class="math inline">\(f(x)\)</span> 这种维数不定, 难以写出解析形式的函数, 代数微分难以求解, 但自动微分依然能得出相当精确的结果.</p>
+</section>
+<section id="自动微分-backward-mode" class="level2">
+<h2 class="anchored" data-anchor-id="自动微分-backward-mode">自动微分-Backward Mode</h2>
+<p>你可能会疑惑, 我们有了前向自动微分, 为什么还要研究什么Backward Mode自动微分呢? 答案很简单, 从前面的介绍你应当注意到, 对于一个<span class="math inline">\(n\)</span> 维的函数, 如果我们想要求得它在某点的梯度, 那么我们需要进行<span class="math inline">\(n\)</span> 次前向自动微分. 对于目前很多应用, 例如深度学习等, 函数的输入维数都是非常巨大的, 在这种情况下前向自动微分的效率就非常低, 这时就需要反向自动微分.<br>
+反向自动微分的原理也非常简单, 先进行一次正向的求解, 计算出每个节点处的函数值, 之后利用链式法则, 从后向前依次求出各节点的导数. 仍然用之前的例子: <span class="math display">\[ f(x_1, x_2) = \ln x_1 + x_1\times x_2 - \sin x_2\]</span> <img src="https://image.yqwu.site/2021-08-17-01-22-35.png" class="img-fluid" alt="2021-08-17-01-22-35"> 其中<span class="math inline">\(\overline{v_{i}}\)</span> 指代<span class="math inline">\(\partial y/\partial v_{i}\)</span>. 需要注意的是, <span class="math inline">\(v_{i}\)</span> 应该被保存, 以供后续使用.<br>
+反向自动微分的原理非常简单, 但是实现上较前向自动微分困难一些. Dual Number方法不能使用, 我们需要构造AST, 从而进行反向求解.<br>
+首先, 我们需要构造节点结构, 其中<code>f</code>标记函数类型, <span class="math inline">\(0\)</span>为 <span class="math inline">\({\rm id}\)</span>, <span class="math inline">\(1\)</span>为加, <span class="math inline">\(2\)</span> 为减, <span class="math inline">\(3\)</span> 为乘…<br>
+<code>sons</code>为子节点的列表, 长度取决于函数的参数个数.<br>
+<code>value</code>为该节点的函数值.<br>
+<code>deri</code>为该节点的导数值.<br>
+<code>id</code>为该节点的id, 主要用于区分输入.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">mutable struct</span> OpNode</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    f<span class="op">::</span><span class="dt">Int64</span>;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    sons;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    value<span class="op">::</span><span class="dt">Float64</span>;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    deri<span class="op">::</span><span class="dt">Float64</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    id<span class="op">::</span><span class="dt">Int64</span>;</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>接下来, 实现了<code>OpNode</code>的默认构造函数, 导数默认置<span class="math inline">\(0\)</span>, 等待反向传播时再进行计算. <code>id</code>自动加一.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>globalID <span class="op">=</span> <span class="fl">0</span>;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">OpNode</span>(f, sons, value)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> globalID;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">OpNode</span>(f, sons, value, <span class="fl">0.0</span>, globalID <span class="op">+=</span> <span class="fl">1</span>);</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>OpNode</code></pre>
+</div>
+</div>
+<p>之后实现了对几种基本运算的重载:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="op">:</span><span class="fu">+</span>(x<span class="op">::</span><span class="dt">OpNode</span>, y<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">OpNode</span>(<span class="fl">1</span>, [x, y], x.value <span class="op">+</span> y.value);</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="op">:</span><span class="fu">-</span>(x<span class="op">::</span><span class="dt">OpNode</span>, y<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">OpNode</span>(<span class="fl">2</span>, [x, y], x.value <span class="op">-</span> y.value);</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="op">:</span><span class="fu">*</span>(x<span class="op">::</span><span class="dt">OpNode</span>, y<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">OpNode</span>(<span class="fl">3</span>, [x, y], x.value <span class="op">*</span> y.value);</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="fu">log</span>(x<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">OpNode</span>(<span class="fl">4</span>, [x], <span class="fu">log</span>(x.value));</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="bu">Base</span>.<span class="fu">sin</span>(x<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">OpNode</span>(<span class="fl">5</span>, [x], <span class="fu">sin</span>(x.value));</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>注意, 至此我们就可以在不修改函数代码的情况下构造出一个AST, 同时完成前向计算各节点的函数值.<br>
+现在, 我们可以来实现反向自动微分的核心代码了</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluate</span>(root<span class="op">::</span><span class="dt">OpNode</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">0</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">1</span>].deri <span class="op">+=</span> root.deri;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">2</span>].deri <span class="op">+=</span> root.deri;</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">1</span>]);</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">2</span>]);</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">2</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">1</span>].deri <span class="op">+=</span> root.deri;</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">2</span>].deri <span class="op">-=</span> root.deri;</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">1</span>]);</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">2</span>]);</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">3</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">1</span>].deri <span class="op">+=</span> root.deri<span class="op">*</span>root.sons[<span class="fl">2</span>].value;</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">2</span>].deri <span class="op">+=</span> root.deri<span class="op">*</span>root.sons[<span class="fl">1</span>].value;</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">1</span>]);</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">2</span>]);</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">4</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">1</span>].deri <span class="op">+=</span> root.deri<span class="op">/</span>root.sons[<span class="fl">1</span>].value;</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">1</span>]);</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.f <span class="op">==</span> <span class="fl">5</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        root.sons[<span class="fl">1</span>].deri <span class="op">+=</span> root.<span class="fu">deri*cos</span>(root.sons[<span class="fl">1</span>].value);</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">evaluate</span>(root.sons[<span class="fl">1</span>]);</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>evaluate (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>根据每个节点的函数种类, 我们应用链式法则求出其子节点的导数值. 之后递归调用求解其子节点, 直到<code>sons</code>为<code>nothing</code>,即抵达叶节点为止.<br>
+下面这个函数可以从计算完成的树中取出指定<code>id</code>的节点的导数值, 用于输出.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getDeriByID</span>(root<span class="op">::</span><span class="dt">OpNode</span>, id<span class="op">::</span><span class="dt">Int64</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.id <span class="op">==</span> id</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> root.deri;</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> root.sons <span class="op">===</span> <span class="cn">nothing</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ;</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> root.sons</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> <span class="fu">getDeriByID</span>(i, id);</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> r<span class="op">!==</span><span class="cn">nothing</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> r;</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>getDeriByID (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>之后, 我们就可以完成反向自动微分的完整逻辑了.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">BackwardAD</span>(f, v<span class="op">::</span><span class="dt">Vector{Float64}</span>)<span class="op">::</span><span class="dt">Vector{Float64}</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> <span class="fu">zeros</span>(<span class="fu">length</span>(v));</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    root <span class="op">=</span> <span class="fu">f</span>(<span class="fu">map</span>(<span class="fu">x-&gt;OpNode</span>(<span class="fl">0</span>, <span class="cn">nothing</span>, x), v));</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    root.deri <span class="op">=</span> <span class="fl">1</span>.;</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evaluate</span>(root);</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">length</span>(v)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        res[i] <span class="op">=</span> <span class="fu">getDeriByID</span>(root, i);</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res;</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>BackwardAD (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>我们将输入向量<code>v</code>转变为一系列叶节点(即<code>map(x-&gt;OpNode(0, nothing, x), v)</code>语句), 并传入给定函数. 由于我们实现了对各基本操作的重载, 计算该函数时即完成了AST的构建和前向计算各节点函数值的过程, 并返回根节点. 之后, 将根节点的导数值设为1, 并开始反向自动微分. 完成后返回相应的梯度向量即可.<br>
+一个相同的例子:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> <span class="fu">log</span>(x[<span class="fl">1</span>]) <span class="op">+</span> x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>] <span class="op">-</span> <span class="fu">sin</span>(x[<span class="fl">2</span>]);</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="fu">BackwardAD</span>(f, [<span class="fl">2</span>., <span class="fl">5</span>.]));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[5.5, 1.7163378145367738]</code></pre>
+</div>
+</div>
+</section>
+<section id="reference与tips" class="level2">
+<h2 class="anchored" data-anchor-id="reference与tips">Reference与Tips</h2>
+<ul>
+<li>本文中所有图片来自于<a href="https://arxiv.org/abs/1502.05767">arXiv:1502.05767</a>, 如果你想了解更多, 更严格的关于自动微分的内容, 强烈推荐你读一读这篇综述.</li>
+<li>本文中没有考虑多输出函数的情况. 实际上, 标准的Automatic Differentiation程序应当给出Jacobian矩阵, 而不是梯度向量. 相应的, 对于当输出维度很大, 而输入维度相对较小的情况下, 前向自动微分的性能就要优于反向自动微分了.</li>
+<li>关于两种自动微分, 本文中只展现了一个最简单, 最易实现的实现方式. 实际的自动微分有许多细节, 例如, 对AST进行图优化, 基于元编程的Differiatial Rule生成等等. 如果你想深入学习, 你应当读一读大项目中的AD实现. 作为推荐, Julia目前实现了一套相当好的可微分编程环境, 你可以读一读<a href="https://github.com/JuliaDiff/ForwardDiff.jl">FowardDiff.jl</a>以及<a href="https://github.com/JuliaDiff/ReverseDiff.jl">ReverseDiff.jl</a>的代码.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

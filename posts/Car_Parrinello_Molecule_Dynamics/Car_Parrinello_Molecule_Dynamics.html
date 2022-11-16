@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yuanqing Wu">
+<meta name="dcterms.date" content="2023-05-10">
+<meta name="description" content="直接将DFT计算应用在分子动力学的每一步上在计算成本上过于高昂, 因此, 引入了一种简化的分子动力学方法: Car-Parrinello分子动力学.">
+
+<title>blogs - Car-Parrinello 分子动力学</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blogs</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Car-Parrinello 分子动力学</h1>
+                  <div>
+        <div class="description">
+          直接将DFT计算应用在分子动力学的每一步上在计算成本上过于高昂, 因此, 引入了一种简化的分子动力学方法: Car-Parrinello分子动力学.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Physics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yuanqing Wu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 10, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="car-parrinello-分子动力学" class="level1">
+<h1>Car-Parrinello 分子动力学</h1>
+<p>这篇文章主要基于Car-Parrinello 1985年的PRL文章<a href="#1"><sup>[1]</sup></a>与Understanding Molecular Simulations一书<a href="#2"><sup>[2]</sup></a>.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>简单来说, CPMD(Car-Parrinello molecular dynamics)是一种<em>ab initio</em> MD方法. 在DFT理论得到提出并应用后, 通过DFT计算出体系的势后, 再执行MD的算法. 这就是BOMD(Born-Oppenheimer MD)的思想. BOMD通过BO近似将原子核与电子解耦, 但相应的缺点就是我们需要进行计算耗时较长的SCF. 为提升AIMD的计算效率, Car和Parrinello在1985年发表了一篇文章, 提供了CPMD这一方法. CPMD不将原子核与电子的运动解耦, 而是为电子引入一个虚质量, 并直接进行简单经典MD算法.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<section id="基本思路" class="level3">
+<h3 class="anchored" data-anchor-id="基本思路">基本思路</h3>
+<p>对于一个给定的体系, 其Hamiltonian由KS泛函给出:</p>
+<p><span class="math display">\[ H_{KS}({\bf r}) = -\frac{1}{2} \nabla^2 + V_{ext}({\bf r}) + V_{KS}[n]({\bf r})\]</span></p>
+<p>其中<span class="math inline">\(V_{KS}[n]({\bf r})\)</span> 是电子密度的泛函. 常规的SCF做法是给定一个初始电子密度<span class="math inline">\(n({\bf r})\)</span>, 然后重复计算 <span class="math inline">\(V_{KS}[n]({\bf r})\)</span>和<span class="math inline">\(n({\bf r})\)</span> 直到自洽. 但是我们可以通过Rayleigh-Ritz方法来直接 对泛函进行最小化, 求得电子基态.<br>
+一旦我们给定了体系电子波函数的一组基 <span class="math inline">\(\{b_{k}({\bf r})\}\)</span> , 体系的波函数可以写为:</p>
+<p><span class="math display">\[ \psi_{i}({\bf r}) = \sum^{N_{b}}_{k=1}c_{ik}b_{k}({\bf r}),\;i=1,\cdots,N_{e}\]</span></p>
+<p>则<span class="math inline">\(H_{KS}\)</span> 现在就是系数<span class="math inline">\(\{c_{ik}\}\)</span> 的一个多元函数. 求解电子基态的任务变为求使$E({c_{ik}} $ 最小的<span class="math inline">\(\{c_{ik}\}\)</span>.<br>
+同时为了保证正交性, 我们需要带有约束:</p>
+<p><span class="math display">\[ \int \psi_{i}^{*}({\bf r}) \psi_{j}({\bf r}) = \delta_{ij}\]</span></p>
+<p>即:</p>
+<p><span class="math display">\[ \sum_{k,k'=1}^{N_{b}}c^{*}_{ik} c_{jk'} \left(\int b_{k}^{*}({\bf r}) b_{k'}({\bf r})\right) - \delta_{ij} = 0 \]</span></p>
+<p>但很明显, 我们面对的是一个<span class="math inline">\(N_{b}\times N_{e}\)</span>维的函数优化问题, 计算量非常巨大.<br>
+幸运的是, 在两年前, Kirkpatrick, Delatt和Vecchi提出了著名的<strong>模拟退火</strong>算法<a href="#3"><sup>[3]</sup></a>, 使得我们有希望快速的 求解这类优化问题. 同时, Car和Parrinello意识到, 模拟退火算法的<em>动力学</em>是Metropolis算法, 这一算法 在相空间中搜索最小值非常高校, 但问题在于我们得到的轨迹没有物理意义. Car和Parrinello构建了如下的 Lagrangian, 通过牛顿力学对参数进行优化:</p>
+<p><span class="math display">\[ \mathcal{L} =  \underbrace{\sum_{i}\frac{1}{2}\mu \int |\dot{\psi}_{i}({\bf r})|^2 {\rm d}{\bf r}}_{\text{Damping}} - E[\{\psi_{i}\}] + \underbrace{\sum_{ij}\Lambda_{ij}\left[\int \psi_{i}^{*}({\bf r})\psi_{j}({\bf r})-\delta_{ij}\right]}_{\text{Lagranian multipliers}}\]</span></p>
+<p>可以看出, Car和Parrinello增加了两项:</p>
+<ul>
+<li>第一项阻尼项, 其中<span class="math inline">\(\mu\)</span>为电子的虚拟质量.</li>
+<li>第三项拉格朗日乘子项, 用于满足约束条件.</li>
+</ul>
+</section>
+<section id="cpmd" class="level3">
+<h3 class="anchored" data-anchor-id="cpmd">CPMD</h3>
+<p>我们将原子核的部分显式的写出:</p>
+<p><span class="math display">\[  \begin{aligned}\mathcal{L} = &amp;\sum \frac{1}{2}\mu \int|\dot{\psi}({\bf r})|^{2} + \sum_{I}\frac{1}{2}M_{I}\dot{{\bf R}_{I}}^{2}+\sum_{v}\frac{1}{2}\mu_{v}\dot{\alpha}^{2}_{v}\\
+&amp;-E[\{\psi_{i}\},\{{\bf R}_{I}\}, \{\alpha_{v}\}]+\sum_{ij}\Lambda_{ij}\left[\int \psi_{i}^{*}({\bf r})\psi_{j}({\bf r}) - \delta_{ij}\right]\end{aligned} \]</span></p>
+<p>其中, <span class="math inline">\({\bf R}_{I}\)</span>为原子核的坐标, <span class="math inline">\(M_{I}\)</span>为原子核质量, <span class="math inline">\(\alpha_{v}\)</span> 为影响体系能量的外参量, 例如压强, 体积等. 我们也相应的为<span class="math inline">\(\alpha_{v}\)</span>添加了阻尼项, 带有虚质量<span class="math inline">\(\mu_{v}\)</span>.<br>
+从上式中, 我们可以得到几个参数在相空间中的运动方程:</p>
+<p><span class="math display">\[ \left\{\begin{aligned}
+&amp;\mu \ddot{\psi}_{i} = -\frac{\delta E}{\delta \psi_{i}^{*}} + \sum_{k}\Lambda_{ik}\psi_{k}\\
+&amp;M_{I}\ddot{{\bf R}}_{I} = - \nabla_{{\bf R}_{I}}E\\
+&amp;\mu_{v}\ddot{\alpha}_{v} = -\frac{\partial E}{\partial \alpha_{v}}
+\end{aligned}\right.\]</span></p>
+<p>上式即为CPMD的核心运动方程. 对于<span class="math inline">\(\psi_{i}\)</span>, 我们更进一步将其展开为<span class="math inline">\({\bf c}_{i} = (c_{i1}, \cdots, c_{iN_{b}})\)</span>的方程:</p>
+<p><span class="math display">\[ \mu \ddot{{\bf c}}_{i} = -\left(H {\bf c}_{i} - \sum_{k}\lambda_{ik}{\bf c}_{k}\right)\]</span></p>
+<p>之后, 就可以通过经典的MD算法计算.</p>
+</section>
+</section>
+<section id="discussions" class="level2">
+<h2 class="anchored" data-anchor-id="discussions">Discussions</h2>
+<section id="与bomd对比" class="level3">
+<h3 class="anchored" data-anchor-id="与bomd对比">与BOMD对比</h3>
+<p>CPMD的优势是一目了然的: 我们不需要每一步都完整求解一次DFT. 我们只需要在最开始的时候进行一次DFT计算, 求得<span class="math inline">\(\{c_{ik}\}\)</span>的初始值即可.<br>
+而缺点相应的也有:</p>
+<ul>
+<li>模型中多了一个超参数<span class="math inline">\(\mu\)</span>.</li>
+<li>稳定收敛的时间步长比BOMD要小(解释见后).</li>
+<li>精确度低于BOMD.</li>
+</ul>
+</section>
+<section id="虚质量" class="level3">
+<h3 class="anchored" data-anchor-id="虚质量">虚质量</h3>
+<p>CPMD的关键就是虚质量的引入, 一个很自然的问题就是, 虚质量该如何选取? 它会如何影响计算的结果? 答案是, 理论上虚质量越小计算越精确. 在CPMD中, 随着体系原子核的运动, 我们不重新计算电子波函数, 而是 基于运动方程进行更新, 这一做法的正确性是由绝热定理保证的. 而当虚质量较大时, 体系中会存在较大的从原子核 到电子的动能转移, 从而破坏绝热条件, 导致计算出现误差.<br>
+另一方面, 较小的电子虚质量, 要求MD算法采用更小的时间步, 来保证计算收敛.<br>
+一般来说, 电子虚质量的取值为<span class="math inline">\(400 \sim 800 \;{\rm a.u.}\)</span>.<br>
+另外, 已被证明, 当<span class="math inline">\(\mu\to 0\)</span>的极限下, CPMD收敛于BOMD.</p>
+</section>
+<section id="拉格朗日乘子的确定" class="level3">
+<h3 class="anchored" data-anchor-id="拉格朗日乘子的确定">拉格朗日乘子的确定</h3>
+<p>在CPMD中, 拉格朗日乘子也随着时间演化, 通过SHAKE算法进行更新, 如果你感兴趣, 可以查阅参考资料.<a href="#4"><sup>[4]</sup></a></p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<ul>
+<li><span id="1">[1] Phys. Rev.&nbsp;Lett., 55 (1985)</span><br>
+</li>
+<li><span id="2">[2] Daan Frenkel, Berend Smit, Understanding Molecular Simulations, Academic Press (2002)</span></li>
+<li><span id="3">[3] Science, 22, 671-680.</span></li>
+<li><span id="4">[4] arXiv:cond-mat/0610552.</span></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

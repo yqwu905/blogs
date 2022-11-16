@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yuanqing Wu">
+<meta name="dcterms.date" content="2022-03-04">
+<meta name="description" content="记录一下用LaTeX撰写毕业论文时的一些想法和经验.">
+
+<title>blogs - 毕业论文写作有感</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blogs</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">毕业论文写作有感</h1>
+                  <div>
+        <div class="description">
+          记录一下用LaTeX撰写毕业论文时的一些想法和经验.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yuanqing Wu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 4, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="毕业论文写作有感" class="level1">
+<h1>毕业论文写作有感</h1>
+<p>最近用在写毕业论文, 之前没有使用LaTeX编写过这类<strong>较长的中文文档</strong>, 遇到了一些问题, 因此做个总结和记录, 也包含一些之前遇到的问题, 一并记录在此(好像该改名叫LaTeX Tips的说).</p>
+<section id="格式设置与内容撰写" class="level2">
+<h2 class="anchored" data-anchor-id="格式设置与内容撰写">格式设置与内容撰写</h2>
+<ul>
+<li><p>所有的设置和自定义命令都应该较好的排序和分类(所谓的Preamble, 导言区), 并在可能的情况下组织进一个单独的<code>.cls</code>或<code>.sty</code> 文件中.<br>
+</p></li>
+<li><p>对于毕业论文这一类较长的文件来说, 请利用<code>\input</code>和<code>\include</code>命令, 将内容拆分到多个文件内, 并合理的组织这些文件的路径. 例如, 在根目录下建立一个<code>pages</code>文件夹存放子文件, <code>pages</code>文件夹内按照章节建立<code>chapter</code>文件夹, 然后每个<code>section</code>对应一个 独立文件.<br>
+P.S. 关于<code>\input</code>和<code>\include</code>的差别, 可以参见<a href="https://tex.stackexchange.com/questions/246/when-should-i-use-input-vs-include">StackOverflow上的回答</a>.<br>
+</p></li>
+<li><p><strong>中文排版请使用<code>ctex</code>, 请不要再使用<code>CJK</code>系列宏包!</strong></p></li>
+<li><p>请注意备份与版本管理, 我推荐使用<code>git</code>.</p></li>
+<li><p>推荐你使用<code>latexmk</code>进行编译. 使用<code>latexmk</code>时, 一个很好的习惯是设置输出路径, 例如:</p>
+<pre><code>#~/.latexmkrc
+$out_dir = '.latexmk_build';</code></pre>
+<p>这样你可以获得一个干净的工作目录. 也更方便设置<code>.gitignore</code>.</p></li>
+<li><p>一点算是私活的内容, 相比于<code>MikTeX</code>, 我更推荐<code>Texlive</code>, 因为它更主流, 包也更全(Texlive 2022刚出, 感兴趣的可以试一试).</p></li>
+<li><p>不算是Tips, 只是提一嘴, 其实LaTeX编译很大一部分时间浪费在磁盘IO上, 因此装在SSD上一般可以提升编译速度; 另一点, 据说<code>Texlive</code>和<code>MikTex</code>在Windows上的实现都包裹了一层兼容层, 因此Windows上LaTeX编译的速度要比Linux上慢很多.</p></li>
+</ul>
+</section>
+<section id="数学公式" class="level2">
+<h2 class="anchored" data-anchor-id="数学公式">数学公式</h2>
+<ul>
+<li><p>请正确的使用各种符号, 包括但不限于:</p>
+<ul>
+<li>微分符号请不要直接打一个d上去, 正确的微分符号是正体, 并且带有半宽的空格, 请使用<code>physics</code>宏包, 其中提供了一系列规范且方便的命令, 可见下图: <img src="https://yqwu.site/img/lLM3t.png" class="img-fluid" alt="physics 宏包中提供的一部分指令"></li>
+<li>说到正体, 也请注意其他的符号(<code>sin</code>, <code>cos</code>, <code>ln</code>等), 往往也是正体, 对于它们, 大部分都有提供指令直接输出正确的格式(<code>\sin</code>, <code>\cos</code>, <code>\ln</code>). 对于没提供, 以 及需要在公式中输入正体字符的时候, 请使用<code>\mathrm</code>, 不要用<code>\text</code>.</li>
+<li>请正确的区分和选择各类花体字符:
+<ul>
+<li><code>\mathbb</code>, <span class="math inline">\(\mathbb{RQCZV}\)</span>.</li>
+<li><code>\mathcal</code>, <span class="math inline">\(\mathcal{RQCZV}\)</span>.</li>
+<li><code>\mathfrak</code>, <span class="math inline">\(\mathfrak{RQCZV}\)</span>.</li>
+<li><code>\mathsf</code>, <span class="math inline">\(\mathsf{RQCZV}\)</span>.</li>
+</ul></li>
+<li>单位输入请使用<code>siunitx</code>宏包.</li>
+</ul></li>
+<li><p>使用<code>\[\]</code>来创建Display Math环境, 而不是<code>$$$$</code>.</p></li>
+<li><p>请尽量使用<code>equation</code>环境, 再嵌套一个<code>aligned</code>环境可以应付99%的公式.</p></li>
+<li><p><code>equation</code>的一个优势是公式自动编号, 对于不需要编号的公式请使用<code>equation*</code>环境, 章节编号可以通过<code>\numberwithin</code>命令设定.</p></li>
+<li><p>还是公式编号, 引用公式请先在<code>equation</code>环境中插入<code>\label{eq:xxx}</code>, 引用时使用<code>\ref{eq:xxx}</code>, 这样可以实现编号变更后自动同步, 并且会在PDF文件中 生成可以点击跳转的链接.</p></li>
+<li><p>公式中, 使用括号等符号时(特别是公式中还有分式时)请尽量使用<code>\left \right</code>组合, 下面展示了直接输入括号和使用<code>\left\right</code>的差别:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode latex code-with-copy"><code class="sourceCode latex"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">\frac</span>{<span class="fu">\lambda</span> <span class="fu">\psi</span>(x, <span class="fu">\lambda</span>)}{<span class="fu">\psi</span>_1}(x, <span class="fu">\lambda</span>)) = <span class="fu">\left</span>(<span class="fu">\frac</span>{<span class="fu">\lambda</span> <span class="fu">\psi</span>(x, <span class="fu">\lambda</span>)}{<span class="fu">\psi</span>_1(x, <span class="fu">\lambda</span>)}<span class="fu">\right</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><span class="math display">\[
+(\frac{\lambda \psi(x, \lambda)}{\psi_1}(x, \lambda)) = \left(\frac{\lambda \psi(x, \lambda)}{\psi_1(x, \lambda)}\right)
+\]</span></p></li>
+</ul>
+</section>
+<section id="其他技巧" class="level2">
+<h2 class="anchored" data-anchor-id="其他技巧">其他技巧</h2>
+<ul>
+<li><p>LaTeX中, <code>{}</code>可以起到和C语言中类似的作用. 例如, <code>\centering</code>, <code>\bf</code>等的作用域只会影响<code>{}</code>内的内容.</p></li>
+<li><p>接上条, 也请注意不要滥用<code>{}</code>, <code>{\centering }</code>输入更方便, 但是合理换行并缩进的:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode latex code-with-copy"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">center</span>}</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">center</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>具有更高的可读性.</p></li>
+<li><p>LaTeX是一个历史悠久并且使用广泛的语言, 这意味着你几乎99.99%的需求都可以通过前人开发的便捷且规范的宏包来解决. 因此在造轮子之前, 请搜索一下有没有相应的宏包, 或者其他人的解决方案.</p></li>
+<li><p><a href="https://tex.stackexchange.com/">StackExchange</a>可以解决你99.99%的问题.</p></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yuanqing Wu">
+<meta name="dcterms.date" content="2020-10-14">
+<meta name="description" content="物理学中常常混淆直积, 直和以及张量积, 这里做一点讨论和区分">
+
+<title>blogs - 直积,直和与张量积</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blogs</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">直积,直和与张量积</h1>
+                  <div>
+        <div class="description">
+          物理学中常常混淆直积, 直和以及张量积, 这里做一点讨论和区分
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Maths</div>
+                <div class="quarto-category">Physics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yuanqing Wu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 14, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="直积直和与张量积" class="level1">
+<h1>直积,直和与张量积</h1>
+<p>最近发现很多教材, 尤其是物理类的教材中对于直积, 直和与张量积的定义存在矛盾与含糊之处, 在此进行一些区分.</p>
+<section id="定义与来源" class="level2">
+<h2 class="anchored" data-anchor-id="定义与来源">定义与来源</h2>
+<section id="直积" class="level3">
+<h3 class="anchored" data-anchor-id="直积">直积</h3>
+<p>直积(Direct Product)的定义与我们所熟知的笛卡尔积(Cartesian Product)相同, 用符号<span class="math inline">\(\times\)</span>标记</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(X\)</span>与<span class="math inline">\(Y\)</span>为两个集合, 他们的直积<span class="math inline">\(X\times Y\)</span>定义为一个集合, 其元素为X和<span class="math inline">\(Y\)</span>中元素的<strong>有序对</strong>,即:</p>
+<p><span class="math inline">\(\forall x\in X, y\in Y, (x,y)\in X\times Y\)</span></p>
+</blockquote>
+<p>可以看出直积有以下几个特点:</p>
+<ul>
+<li>是对于集合定义的.</li>
+<li>如果对于线性空间定义, 一个<span class="math inline">\(n\)</span>维空间<span class="math inline">\(X\)</span>和一个<span class="math inline">\(m\)</span>维空间<span class="math inline">\(Y\)</span>, 其直积空间<span class="math inline">\(X\times Y\)</span>的维数为<span class="math inline">\(n+m\)</span>.</li>
+<li>实际上, 我们对于<span class="math inline">\(X\times Y\)</span>上的运算和结构没做<strong>任何规定</strong>.但一般我们总是让<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>分别继承之前的运算和结构,就像我们在直和中做的那样.</li>
+</ul>
+</section>
+<section id="直和" class="level3">
+<h3 class="anchored" data-anchor-id="直和">直和</h3>
+<p>直和(Direct Sum)用符号<span class="math inline">\(\oplus\)</span>标记, 定义为</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(V,W\)</span>为两定义在域<span class="math inline">\(\mathbb{F}\)</span>上的<strong>矢量空间</strong>, 他们的直和<span class="math inline">\(V\oplus W\)</span>定义为一个矢量空间, 其中的元素为<span class="math inline">\(V\)</span>和<span class="math inline">\(W\)</span>中元素的有序对, 并带有如下线性结构 <span class="math display">\[(x_1, y_1) + (x_2, y_2) = (x_1 + x_2, y_1 + y_2)\]</span> <span class="math display">\[\alpha (x,y) = (\alpha x, \alpha y)\]</span> 其中<span class="math inline">\(x,x_1,x_2 \in V\)</span>, <span class="math inline">\(y,y_1, y_2 \in W\)</span>, <span class="math inline">\(\alpha\in\mathbb{F}\)</span>.</p>
+</blockquote>
+<p>可以看出直和有以下特点:</p>
+<ul>
+<li>定义在矢量空间上的.</li>
+<li><span class="math inline">\(n\)</span>维矢量空间与<span class="math inline">\(m\)</span>维矢量空间的直和空间维数为<span class="math inline">\(n+m\)</span>.</li>
+<li>直和空间带有天然的带有运算和结构.</li>
+</ul>
+</section>
+<section id="张量积" class="level3">
+<h3 class="anchored" data-anchor-id="张量积">张量积</h3>
+<p>张量积(Tensor Product)的定义稍微显得复杂一点,同时注意, 我们使用<span class="math inline">\(\otimes\)</span>符号来同时标记对空间和张量的张量积, 为了不引起歧义, <span class="math inline">\(A\otimes B\)</span>这种大写字母指的是空间间的张量积, 而<span class="math inline">\(a\otimes b\)</span>指的是张量间的张量积. 我们先定义张量间的张量积</p>
+<blockquote class="blockquote">
+<p>对于两张量<span class="math inline">\(a^{\mu}{}_{\nu}, b^{\rho}{}_{\sigma}\)</span>, 其张量积定义为<span class="math inline">\((a\otimes b)^{\mu\rho}{}_{\nu\sigma}\)</span>. 写成矩阵形式: <span class="math display">\[\begin{aligned}
+&amp;a^\mu{}_\nu = \begin{pmatrix}a^1{}_1&amp; a^1{}_2\\ a^2{}_1&amp; a^2{}_2\end{pmatrix}\\\\
+&amp;b^\rho{}_\sigma = \begin{pmatrix}b^1{}_1&amp; b^1{}_2\\ b^2{}_1&amp; b^2{}_2\end{pmatrix}\\\\
+(a\otimes b)^{\mu\rho}{}_{\nu\sigma} &amp;= \begin{pmatrix}a^1{}_1 b^\rho{}_\sigma&amp; a^1{}_2b^\rho{}_\sigma\\ a^2{}_1b^\rho{}_\sigma&amp; a^2{}_2b^\rho{}_\sigma\end{pmatrix}\\\\
+&amp;=\begin{pmatrix}a^1{}_1 b^1{}_1 &amp; a^1{}_1 b^1{}_2 &amp; a^1{}_2 b^1{}_1&amp; a^1{}_2 b^1{}_2\\ a^1{}_1b^2{}_1 &amp; a^1{}_1b^2{}_2 &amp; a^1{}_2 b^2{}_1 &amp; a^1{}_2 b^2{}_2\\ a^2{}_1a^1{}_1 &amp; a^2{}_1b^1{}_2 &amp; a^2{}_2 b^1{}_1 &amp; a^2{}_2 b^1{}_2\\ a^2{}_1a^2{}_1 &amp; a^2{}_1b^2{}_2 &amp; a^2{}_2 b^2{}_1 &amp; a^2{}_2 b^2{}_2\\ \end{pmatrix}
+\end{aligned}\]</span> <span class="math inline">\(V,W,U,X\)</span>为定义在域<span class="math inline">\(\mathbb{F}\)</span>上的<strong>矢量空间</strong>. <span class="math inline">\(p:V\times W\to X\)</span> 为一个多线性映射, 则X为<span class="math inline">\(V\otimes W\)</span>, <span class="math inline">\(p\)</span>为<span class="math inline">\(v\otimes w\)</span>,若对于<strong>任意</strong>多线性映射<span class="math inline">\(A:V\times W\to U\)</span>, 有且仅有一个线性映射<span class="math inline">\(A^\otimes :X\to U\)</span>, 使得<span class="math inline">\(A=A^\otimes \circ p\)</span></p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="http://image.yqwu.site/img/202106292058.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">202106292058</figcaption><p></p>
+</figure>
+</div>
+<p>张量积的性质:</p>
+<ul>
+<li>定义在矢量空间上,元素是张量(多线性映射).</li>
+<li><span class="math inline">\(n\)</span>维矢量空间与<span class="math inline">\(m\)</span>维矢量空间的张量积空间维数为<span class="math inline">\(nm\)</span>.</li>
+<li>张量积空间天然带有多线性结构.</li>
+</ul>
+</section>
+</section>
+<section id="区别" class="level2">
+<h2 class="anchored" data-anchor-id="区别">区别</h2>
+<section id="直和与直积" class="level3">
+<h3 class="anchored" data-anchor-id="直和与直积">直和与直积</h3>
+<p>直和与直积几乎没有什么区别, 仅有的两个区别在于:</p>
+<ul>
+<li>默认情况下, 直积可以对任何集合定义, 并且直积空间不附带任何结构. 但直和空间是对于两个矢量空间定义的, 自然带有线性结构.</li>
+<li>对于无限维空间, 直和空间的元素只能有有限个非零分量, 而直积空间的元素可以有任意个非零分量, i.e.&nbsp;直和空间是直积空间的真子空间. (这是是一个定义, 不用问为什么).</li>
+</ul>
+</section>
+<section id="直和直积与张量积" class="level3">
+<h3 class="anchored" data-anchor-id="直和直积与张量积">直和/直积与张量积</h3>
+<p>二者非常不一样, 主要来源于张量积空间保持了多线性结构. 举了例子来说明两者的区别. 考虑一个<span class="math inline">\(2\)</span>维矢量空间<span class="math inline">\(A\)</span>和一个<span class="math inline">\(1\)</span>维矢量空间<span class="math inline">\(B\)</span>, 其基底分别为<span class="math inline">\(\{a_1,a_2\}\)</span>和<span class="math inline">\(\{b_1\}\)</span>.其的直和空间<span class="math inline">\(A\oplus B\)</span>中任意元素: <span class="math display">\[
+(a\cdot a_1,b\cdot a_2,c\cdot b_1)
+\]</span> 总可以将其分解为: <span class="math display">\[
+a(a_1,0,0) + b(0,a_2,0) + c(0,0,b_1)
+\]</span> 可见, 直和空间是三维的, 再考虑其张量积空间<span class="math inline">\(A\otimes B\)</span>中的任意元素 <span class="math display">\[
+(a\cdot a_1, b\cdot a_2)\otimes(c\cdot b_1)
+\]</span> 可以写成: <span class="math display">\[
+ac \cdot a_1\otimes b_1 + bc \cdot a_2\otimes b_1
+\]</span> 可以看出张量积空间是<span class="math inline">\(2\times 1 = 2\)</span>维的.</p>
+<p>其间的主要差异是由多线性结构引起的. 因为直和/直积空间只是将两个空间的元素按顺序放在一起,因此维数是两空间相加. 而张量积空间中, 由于多线性性, 我们有: <span class="math display">\[
+(a+b)\otimes (c+d) = a\otimes c + b\otimes c + a\otimes d + b\otimes d
+\]</span> 因此维数是相乘.</p>
+</section>
+</section>
+<section id="总结" class="level2">
+<h2 class="anchored" data-anchor-id="总结">总结</h2>
+<p>很多物理书中总喜欢将张量积和直积混淆, 我看到的最严重的就是喀兴林先生的《高等量子力学》一书, 甚至还在书中专门花了一节来讨论直和与直积空间的区别. 以后我要注意区分.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

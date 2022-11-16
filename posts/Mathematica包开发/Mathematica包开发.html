@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yuanqing Wu">
+<meta name="dcterms.date" content="2022-04-01">
+<meta name="description" content="Mathematica长期以来都给人一种大号计算器的感觉, 这里介绍一个更接近于传统意义上的编程语言中的应用: 将代码组织并封装成一个包">
+
+<title>blogs - Mathematica包开发(一)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blogs</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Mathematica包开发(一)</h1>
+                  <div>
+        <div class="description">
+          Mathematica长期以来都给人一种大号计算器的感觉, 这里介绍一个更接近于传统意义上的编程语言中的应用: 将代码组织并封装成一个包
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Computer Science</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yuanqing Wu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 1, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="mathematica包开发一" class="level1">
+<h1>Mathematica包开发(一)</h1>
+<p>最近需要写一个Mathematica的Package, 但网上教程并不多, <a href="https://reference.wolfram.com/language/tutorial/ModularityAndTheNamingOfThings.html.zh?source=footer">官方文档</a>冗长而又充斥着机翻, 因此做个笔记备忘.<br>
+本篇将主要介绍一下常用于创建包的函数, Paclet和文档等内容将放在下一篇.</p>
+<section id="局域变量module和with" class="level2">
+<h2 class="anchored" data-anchor-id="局域变量module和with">局域变量:<code>Module</code>和<code>With</code></h2>
+<p>Wolfram语言中提供了一些方式来创建局部变量. 最常用的是<code>Module</code>和<code>With</code>.</p>
+<ul>
+<li><code>Module</code>的定义:
+<ul>
+<li><code>Module[{x, y, ...}, expr]</code>.</li>
+<li><code>Module[{x=x0, ...}, expr]</code>.</li>
+<li><code>Module</code>会将<code>x,y,...</code>作为module内的局域变量处理, 并override module外的变量.</li>
+<li>如果<code>Module</code>对局域变量赋有初值, 那么该局域变量会在module执行前被赋值. 常见 的作用为将一个同名全局变量的值赋给局域变量.</li>
+<li>Examples
+<ul>
+<li><p>局域变量</p>
+<pre class="wolfram"><code>In[1]:= x = 10;
+Out[1]:= 10
+In[2]:= Module[{x},
+          x = 9;
+          x
+        ]
+Out[2]:= 9
+In[3]:= x
+Out[3]:= 10</code></pre></li>
+<li><p>局域函数</p>
+<pre class="wolfram"><code>In[1]:= fib[n_] :=
+          Module[{f},
+           f[1] = f[2] = 1;
+           f[i_] := f[i] = f[i - 1] + f[i - 2];
+           f[n]
+          ]
+In[2]:= fib[10]
+Out[2]:= 55
+In[3]:= f
+Out[3]:= f</code></pre></li>
+<li><p>赋有初始值的module</p>
+<pre class="wolfram"><code>gcd[m0_, n0_] :=
+  Module[{m = m0, n = n0},
+   While[n != 0, {m, n} = {n, Mod[m, n]}];
+   m
+  ]</code></pre></li>
+</ul></li>
+</ul></li>
+<li><code>With</code>的定义
+<ul>
+<li><code>With[{x=x0,y=y0, ... },expr]</code></li>
+<li>和<code>Module</code>不同, <code>With</code>必须给定局域变量的初始值, 同时, <code>With</code>会在执行前将所有局域 变量替换成给定的初始值, 这意味着<code>With</code>创建的是<strong>局域常数</strong></li>
+<li>Examples
+<ul>
+<li><p>尝试修改<code>With</code>声明的常量值:</p>
+<pre class="wolfram"><code>In[1]:= With[{x = 10},
+          x = x + 1;
+        ]
+Out[1]:= Set::setraw: Cannot assign to raw object 10.</code></pre>
+<p>可以看出<code>With</code>的效果类似于c中的<code>#define</code>, 在执行前直接被替换为给定值.</p></li>
+<li><p><code>With</code>的执行效率高于<code>Module</code>:</p>
+<pre class="wolfram"><code>In[1]:= Timing[Do[Module[{x = 5}, x;], {10^5}]]
+Out[1]:= {0.109375, Null}
+In[2]:= Timing[Do[With[{x = 5}, x;], {10^5}]]
+Out[2]:= {0.046875, Null}</code></pre></li>
+<li><p>注意,<code>With</code>中执行的是<strong>替换</strong>, 因此可以代入<code>Hold</code>的表达式:</p>
+<pre class="wolfram"><code>In[1]:= With[{x=y}, Hold[x]]
+Out[1]:= Hold[y]
+In[2]:= With[{x=y}, Hold[x]]
+Out[2]:= Hold[x$138]</code></pre>
+<p>其中,<code>x$138</code>的形式是<code>Module</code>用了代表内部每一个局部变量的,形式均为<code>x$nnn</code>, <code>nnn</code>为<code>Module</code>中任何形式使用变量的总次数, 记录于全局变量<code>$ModuleNumber</code> 中.</p></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="全局变量的局域值block" class="level2">
+<h2 class="anchored" data-anchor-id="全局变量的局域值block">全局变量的局域值:<code>Block</code></h2>
+<p><code>Block</code>可以为一个全局变量创建一个局域值:</p>
+<pre class="wolfram"><code>In[1]:= x = 10
+Out[1]:= 10
+In[2]:= Block[{x=1},x]
+Out[2]:= 1
+In[3]:= x
+Out[3]:= 10</code></pre>
+<p>可以看出<code>Block</code>在不改变全局变量已有赋值的情况下, 为全局变量创建了一个局域值.<br>
+<code>Module</code>和<code>Block</code>的区别主要在于:<strong><code>Module</code>是声明一个局域变量, 而<code>Block</code>是全局变量的 一个局域值</strong>:</p>
+<pre class="wolfram"><code>In[1]:= m = i^2
+Out[1]:= i^2
+In[2]:= Block[{i = a}, i + m]
+Out[2]:= a + a^2
+In[3]:= Module[{i = a}, i + m]
+Out[3]:= a + i^2</code></pre>
+<p>从上面这个例子中你应当可以看出区别所在.</p>
+</section>
+<section id="命名空间context" class="level2">
+<h2 class="anchored" data-anchor-id="命名空间context">命名空间:<code>Context</code></h2>
+<p>为了避免不同程序包中的符号命名冲突, Wolfram语言中引入了类似于C++的namespace的 概念, 称为<strong>上下文</strong>:<code>Context</code>.<br>
+Wolfram语言中,任何变量名实际上都由两部分组成:上下文和变量名:</p>
+<pre><code>context`name</code></pre>
+<p>任何上下文都以`结尾, 当你启动一个Wofram进程时, 默认的上下文为<code>Global'</code>,可以通 过<code>Context[]</code>或者<code>$Context</code>变量来查看当前的默认上下文.<br>
+另外, Wolfram还可以加载一系列的模块, 他们可能包含不同的上下文, 为此, Wolfram语 言中引入了<code>$ContextPath</code>这一变量, 类似于系统的搜索路径, Wolfram会<strong>首先</strong>在 <code>$ContextPath</code>的上下文中搜索, 之后才会搜索当前的上下文.</p>
+<pre class="wolfram"><code>In[1]:= $Context
+Out[1]= Global`
+
+In[2]:= Context[]
+Out[2]= Global`
+
+In[3]:= $ContextPath
+Out[3]= {NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[4]:= a = 1
+Out[4]= 1
+
+In[5]:= Context[a]
+Out[5]= Global`
+
+In[6]:= System`b = 2
+Out[6]= 2
+
+In[7]:= Context[b]
+Out[7]= System`
+
+In[8]:= Global`b = 3
+Global`b::shdw: Symbol b appears in multiple contexts {Global`, System`}; definitions in context Global` may shadow or be shadowed by other definiti
+ons.
+Out[8]= 3
+
+In[9]:= b
+Out[9]= 2
+
+In[10]:= Global`b
+Out[10]= 3</code></pre>
+<p>可以使用<code>Begin</code>和<code>End</code>来创建和关闭一个新的上下文:</p>
+<pre class="wolfram"><code>In[1]:= Begin["newContext`"] (* 相当于 $Context="newContext`" *)
+Out[1]= newContext`
+
+In[2]:= var1 = 100;
+        Context[var1]
+Out[2]= newContext`
+
+In[3]:= Context[]
+Out[3]= newContext`
+
+In[4]:= End[]
+Out[4]= newContext`
+
+In[5]:= Context[]
+Out[5]= Global`</code></pre>
+<p>在新的上下文中创建的变量无法只通过变量名访问:</p>
+<pre class="wolfram"><code>In[1]:= var1
+Out[1]= Var1
+
+In[2]:= newContext`var1
+Out[2]= 100</code></pre>
+<p>将某一个上下文加入到<code>$ContextPath</code>中可以实现只是用变量名访问:</p>
+<pre class="wolfram"><code>In[1]:= PrependTo[$ContextPath, "newContext`"]
+Out[1]= {newContext`, NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[2]:= var1
+Out[2]= 100</code></pre>
+</section>
+<section id="程序包package" class="level2">
+<h2 class="anchored" data-anchor-id="程序包package">程序包:<code>Package</code></h2>
+<p>可以使用<code>BeginPackage</code>和<code>EndPackage</code>函数来创建一个程序包:</p>
+<pre class="wolfram"><code>In[1]:= BeginPackage["newPackage`"]
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        EndPackage[]
+
+In[2]:= SumSquares[1, 2]
+Out[2]= 5
+
+In[3]:= $ContextPath
+Out[3]= {newPackage`, NaturalLanguageProcessingLoader`, System`, Global`}</code></pre>
+<p>可以看出, 创建Package会自动创建同名的上下文, 并自动添加到<code>$ContextPath</code>中.<br>
+同时, Wolfram语言中也可以声明私有成员, 例如, 上例中的<code>n</code>是可以修改的:</p>
+<pre class="wolfram"><code>In[1]:= n=3;
+        SumSquares[1, 2]
+Out[1]= 9</code></pre>
+<p>可以通过在Package中创建<code>Private</code>上下文来声明私有成员:</p>
+<pre class="wolfram"><code>In[1]:= BeginPackage["newPackage`"]
+        SumSquares::usage = "SumSquares[x, y] = x^2 + y^2"
+        Begin["`Private`"];
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        End[]
+        EndPackage[]
+
+In[2]:= SumSquares[1,2];
+Out[2]= 5
+
+In[3]:= n=3;
+        SumSquares[1,2];
+Out[2]= 5</code></pre>
+<p>位于<code>Private</code>环境内的函数和变量无法被在Package外部访问, 因此我们手动在Package内 引用<code>SumSquares</code>函数, 使其能够被外部调用.</p>
+</section>
+<section id="something-else" class="level2">
+<h2 class="anchored" data-anchor-id="something-else">Something Else</h2>
+<ul>
+<li>本文中大部分的例子来源于相应函数的文档, 还有一部分来自于Wolfram的讲座, 你可以 从<a href="https://github.com/WolframChinaWL/WLProgramingTraining">这里</a>获取到演示笔记本, 本节的内容对应于Module 7.</li>
+<li>关于创建Paclet包, 单元测试, 创建文档等相关内容会放在下篇中讨论.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
