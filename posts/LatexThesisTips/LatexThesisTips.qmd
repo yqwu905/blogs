@@ -1,0 +1,77 @@
+---
+title: 毕业论文写作有感
+author: "Yuanqing Wu"
+description: "记录一下用LaTeX撰写毕业论文时的一些想法和经验."
+tags: ['LaTeX']
+date: "03/04/2022"
+photos: https://image.yqwu.site/i/hz25.jpg
+---
+
+# 毕业论文写作有感
+
+最近用在写毕业论文, 之前没有使用LaTeX编写过这类**较长的中文文档**, 遇到了一些问题, 因此做个总结和记录,
+也包含一些之前遇到的问题, 一并记录在此(好像该改名叫LaTeX Tips的说).  
+
+## 格式设置与内容撰写
+
+* 所有的设置和自定义命令都应该较好的排序和分类(所谓的Preamble, 导言区), 并在可能的情况下组织进一个单独的`.cls`或`.sty`
+文件中.  
+* 对于毕业论文这一类较长的文件来说, 请利用`\input`和`\include`命令, 将内容拆分到多个文件内, 并合理的组织这些文件的路径. 
+  例如, 在根目录下建立一个`pages`文件夹存放子文件, `pages`文件夹内按照章节建立`chapter`文件夹, 然后每个`section`对应一个
+  独立文件.  
+  P.S. 关于`\input`和`\include`的差别, 可以参见[StackOverflow上的回答](https://tex.stackexchange.com/questions/246/when-should-i-use-input-vs-include).  
+* **中文排版请使用`ctex`, 请不要再使用`CJK`系列宏包!**
+* 请注意备份与版本管理, 我推荐使用`git`.
+* 推荐你使用`latexmk`进行编译. 使用`latexmk`时, 一个很好的习惯是设置输出路径, 例如:
+  
+  ```
+  #~/.latexmkrc
+  $out_dir = '.latexmk_build';
+  ```
+  
+  这样你可以获得一个干净的工作目录. 也更方便设置`.gitignore`.
+* 一点算是私活的内容, 相比于`MikTeX`, 我更推荐`Texlive`, 因为它更主流, 包也更全(Texlive 2022刚出, 感兴趣的可以试一试).
+* 不算是Tips, 只是提一嘴, 其实LaTeX编译很大一部分时间浪费在磁盘IO上, 因此装在SSD上一般可以提升编译速度; 另一点,
+  据说`Texlive`和`MikTex`在Windows上的实现都包裹了一层兼容层, 因此Windows上LaTeX编译的速度要比Linux上慢很多.
+
+## 数学公式
+
+* 请正确的使用各种符号, 包括但不限于:  
+  * 微分符号请不要直接打一个d上去, 正确的微分符号是正体, 并且带有半宽的空格,
+    请使用`physics`宏包, 其中提供了一系列规范且方便的命令, 可见下图:
+    ![physics 宏包中提供的一部分指令](https://yqwu.site/img/lLM3t.png)
+  * 说到正体, 也请注意其他的符号(`sin`, `cos`, `ln`等), 往往也是正体, 对于它们,
+    大部分都有提供指令直接输出正确的格式(`\sin`, `\cos`, `\ln`). 对于没提供, 以
+    及需要在公式中输入正体字符的时候, 请使用`\mathrm`, 不要用`\text`.
+  * 请正确的区分和选择各类花体字符:
+    * `\mathbb`, $\mathbb{RQCZV}$.
+    * `\mathcal`, $\mathcal{RQCZV}$.
+    * `\mathfrak`,  $\mathfrak{RQCZV}$.
+    * `\mathsf`, $\mathsf{RQCZV}$.
+  * 单位输入请使用`siunitx`宏包.
+* 使用`\[\]`来创建Display Math环境, 而不是`$$$$`.
+* 请尽量使用`equation`环境, 再嵌套一个`aligned`环境可以应付99\%的公式.
+* `equation`的一个优势是公式自动编号, 对于不需要编号的公式请使用`equation*`环境, 章节编号可以通过`\numberwithin`命令设定.
+* 还是公式编号, 引用公式请先在`equation`环境中插入`\label{eq:xxx}`, 引用时使用`\ref{eq:xxx}`, 这样可以实现编号变更后自动同步, 并且会在PDF文件中
+  生成可以点击跳转的链接.
+* 公式中, 使用括号等符号时(特别是公式中还有分式时)请尽量使用`\left \right`组合, 下面展示了直接输入括号和使用`\left\right`的差别:
+  ```latex
+  (\frac{\lambda \psi(x, \lambda)}{\psi_1}(x, \lambda)) = \left(\frac{\lambda \psi(x, \lambda)}{\psi_1(x, \lambda)}\right)
+  ```
+  $$
+  (\frac{\lambda \psi(x, \lambda)}{\psi_1}(x, \lambda)) = \left(\frac{\lambda \psi(x, \lambda)}{\psi_1(x, \lambda)}\right)
+  $$
+
+## 其他技巧
+
+* LaTeX中, `{}`可以起到和C语言中类似的作用. 例如, `\centering`, `\bf`等的作用域只会影响`{}`内的内容.
+* 接上条, 也请注意不要滥用`{}`, `{\centering }`输入更方便, 但是合理换行并缩进的:
+  ```latex
+  \begin{center}
+    ...
+  \end{center}
+  ```
+  具有更高的可读性.
+* LaTeX是一个历史悠久并且使用广泛的语言, 这意味着你几乎99.99\%的需求都可以通过前人开发的便捷且规范的宏包来解决.
+  因此在造轮子之前, 请搜索一下有没有相应的宏包, 或者其他人的解决方案.
+* [StackExchange](https://tex.stackexchange.com/)可以解决你99.99\%的问题.

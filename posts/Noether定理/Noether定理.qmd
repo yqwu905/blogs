@@ -1,0 +1,181 @@
+---
+title: Noether定理
+author: "Yuanqing Wu"
+description: "一个简化的, 初等的对Noether定理的证明和讨论"
+tags: ['Noether定理', '理论力学']
+mathjax: true
+categories:
+  - Physics
+date: "03/04/2021"
+photos: https://image.yqwu.site/i/hz26.jpg
+---
+# Noether定理
+
+> 最近看Atland的凝聚态场论, 对Noether定理的证明与讲解的部分感到有些含糊(毕竟这种东西应该放在理力里讲), 在此做一些总结
+
+## 守恒律  
+
+考虑一个泛函$\mathcal{J}$:
+
+$$\mathcal{S}(q) = \int _{t_0}^{t_1} \mathcal{L}(t, q, \dot{q},\cdots, q^{(n)}){\rm d}t\tag{1}$$
+ 
+若存在一个函数$\phi(t, q, \dot{q},\cdots,q^{k})$满足,
+
+$$\frac{\rm d}{{\rm d} t}\phi(t, q, \dot{q},\cdots,q^{(k)}) = 0\tag{2}$$
+ 
+则称上式为$\mathcal{S}$的$k$ 阶守恒律, 相应的$\phi$ 称为$\mathcal{S}$ 的守恒量.
+
+> *Example 1*  
+> 考虑一个不显含时间的作用量:
+> $$\mathcal{S}(q) = \int _{t_0}^{t_1}\mathcal{L}(q,\dot{q}){\rm d} t$$
+> 显然的,我们可以找到其一阶守恒律
+> $$H = \dot{q} \frac{\partial \mathcal{L}}{\partial \dot{q}} - \mathcal{L}$$
+
+## 对称性
+对于一个给定的作用量：
+
+$$ \mathcal{S}(q) = \int ^{t_1}_{t_0} \mathcal{L}(t,q,\dot{q}){\rm d} t \tag{3}$$
+
+考虑两个单参变换,并要求他们是$C^{\infty}$的:
+
+$$ X=\theta(t,q;\epsilon)\quad Y = \psi(t,q;\epsilon) \tag{4}$$
+
+满足:
+
+$$ \theta(t,q;0)=t\quad \psi(t,q;0) = q \tag{5}$$
+
+> Example 2  
+> 平移变换:$X=x+\cos \theta \;\epsilon, Y=y+\sin \theta\; \epsilon$  
+> 旋转变换:$X = x\cos \epsilon + y \sin \epsilon,Y = -x\sin \epsilon + y\cos \epsilon$
+
+Jacobian矩阵为:
+
+$$ J=\frac{\partial (X,Y)}{\partial(t,q)} = \begin{pmatrix}\frac{\partial \theta}{\partial t} & \frac{\partial \theta}{\partial q}\\ \frac{\partial \psi}{\partial t} & \frac{\partial \psi}{\partial q}\end{pmatrix}  = \begin{pmatrix}\theta_{t}& \theta_{q}\\ \psi_{t} & \psi_{q}\end{pmatrix} \tag{6}$$
+
+行列式为:
+ 
+$$ |J| = \theta_{t} \psi_{q} - \theta_{t}\psi_{q} \tag{7}$$
+
+当$\epsilon=0$ 时,我们有:
+
+$$ |J| = 1 \tag{8}$$
+
+由于$\theta$ 与$\psi$ 均是$C^{\infty}$的, $|J|$ 也是连续的,因此在$\epsilon=0$ 的一个足够小的邻域内$|J|\neq 0$,即, 我们可以找到一组逆映射将$(X,Y)$ 映回$(t,q)$:
+ 
+$$ t = \Theta(X,Y;\epsilon)\quad q = \Psi(X,Y;\epsilon) \tag{9}$$
+
+现在考虑一个给定的轨迹$q(t)$,变换后的轨迹由一组参数方程给定:
+
+$$ X_{\epsilon} = \theta(t,q;\epsilon)\quad Y_{\epsilon} = \psi(t,q;\epsilon) \tag{10}$$
+
+现在我们可以定义**变分不变性**,作用量$\mathcal{S}$ 的拉氏量$\mathcal{L}$ 称为在区间$[t_0,t_1]$ 上变分不变,当其满足,对$\forall [a,b]\in[t_0,t_1]$, $\exist\delta\in \mathbb{R}$,使得$\forall \epsilon< \delta$:
+
+$$ \int^{a}_{b}\mathcal{L}(t,q,\dot{q}) {\rm d} t = \int^{a_{\epsilon}}_{b_{\epsilon}}\mathcal{L}(X_{\epsilon},Y_{\epsilon} ,\dot{Y_{\epsilon}}){\rm d} X \tag{11}$$
+
+> Example 3  
+> $$ \mathcal{L}(t,q,\dot q) = \dot q^{2}(x) + q^{2}(x) $$
+> 考虑时间平移变换:
+> $$ X = t+\epsilon,\quad Y=q $$
+> 我们有
+> $$ \dot Y_{\epsilon} = \dot q $$
+> 则,对于给定的一个区间$[t_0,t_1]$, 我们有:
+> $$ \int^{t_1}_{t_0}(\dot q^{2} + q^{2}) {\rm d}t = \int ^{t_1+\epsilon}_{t_0+\epsilon}(\dot Y_{\epsilon} + Y^{2}_{\epsilon})=\int^{t_1+\epsilon}_{t_0+\epsilon}(\dot q + q(t-\epsilon)){\rm d}t $$
+> 成立,即上式的拉氏量在时间平移变换下是不变的
+
+进一步的,在讨论Noether定理前,我们介绍一种描述变换的通用方式,即[^1] :
+
+$$ \begin{aligned}X\approx t + \epsilon \zeta \\ Y\approx q+\epsilon \eta\end{aligned} \tag{12} $$
+
+其中, $\epsilon,\eta$ 为任意光滑函数, 称为变换的**生成函数**. 具体的, 与(4)式比较,我们有:
+
+$$ \begin{aligned}\zeta(t,q) = \left.\frac{\partial \theta}{\partial \epsilon}\right|_{(t,q;0)} \\ \epsilon(t,q) = \left.\frac{\partial \psi}{\partial \epsilon}\right|_{(t,q;0)} \end{aligned} \tag{13}$$
+
+
+## Noether 定理
+**Noether定理**:若$\mathcal{L}(t,q,\dot q)$在$[t_0,t_1]$上对于生成函数为$\zeta,\eta$ 的变换具有变分不变性, 则:
+
+$$ \eta\frac{\partial \mathcal{L}}{\partial \dot q} + \zeta\left(\mathcal{L} - \frac{\partial \mathcal{L}}{\partial \dot q}\dot q\right) = \text{const} \tag{14}$$
+
+在作用量$\mathcal{S}$ 的任意极值轨道上成立.
+
+$$ \mathcal{S}  =\int ^{t_1}_{t_0}\mathcal{L}(t,q,\dot q){\rm d} t \tag{15}$$
+
+(13)式也可以写为:
+
+$$ \eta p - \zeta \mathcal{H} = \text{const} \tag{16}$$
+
+$p = \frac{\partial \mathcal{L}}{\partial \dot q}$ 为相对于$q$ 的广义动量, $\mathcal{H} = \mathcal{L} - p\dot q$为哈密顿量.  
+
+> Proof.
+> 令
+> $$  \widetilde{\mathcal{S}}(q) = \int^{b}_{a}\mathcal{L}(t,q,\dot q){\rm d} t $$
+> 由定义(11), $\forall [a,b]\in [t_0, t_1]$, 有:
+> $$ \widetilde{S}(Y_{\epsilon})  - \widetilde{S}(q) = \int^{b_{\epsilon}}_{a_{\epsilon}}\mathcal{L}(X,Y_{\epsilon},\dot Y_{\epsilon}) {\rm d} X - \int^{b}_{a}\mathcal{L}(t,q,\dot q){\rm d} t = 0$$
+> 对于足够小的$\epsilon$成立, 我们有:
+> $$ X = t+\epsilon \zeta + O(\epsilon^{2}) = t + \epsilon X_{0} $$
+> $$ Y_{\epsilon} = q+  \epsilon \eta + O(\epsilon^{2}) = q + \epsilon Y_{0} $$
+> 或者, 上式给定了$\delta t = \zeta, \delta q = \eta$.   
+> 对于上述变分问题, 其取极值时, 我们有:
+> $$ \left.p \delta q - \mathcal{H} \delta t\right|^{x_1}_{x_2} = 0$$
+> 代入:
+> $$ \eta p - \zeta \mathcal{H}|^{b}_{a} = 0 $$
+> 由于$a,b$为满足 $t_0\leq a < b\leq t_1$的任意实数, 因此上式成立的唯一可能为:
+> $$  \eta p - \zeta \mathcal{H} = \text{const} $$
+> Q.E.D
+
+进一步的, 对于$n$ 个自由度的体系,Noether定理可以进行推广,拉氏量的形式变为$\mathcal{L}(t,{\bf q},\dot {\bf q})$, ${\bf q} = (q_1,\cdots, q_{n})$, 给定由$\zeta,\eta_{k}$生成的变换,其中:
+
+$$ Y_{k} = q_{k} + \epsilon \eta_{k} \tag{17}$$
+
+广义动量与哈氏量为[^2] :
+$$ \begin{aligned}&p_{k} = \frac{\partial \mathcal{L}}{\partial \dot q_{k}} \\
+&\mathcal{H} = p_{k}\dot q_{k} - \mathcal{L}\end{aligned}\tag{18}$$
+则守恒量为:
+
+$$ p_{k} \eta_{k} - \mathcal{H} \zeta = \text{const} $$
+
+接下来,我们展示几个具体的例子:  
+
+* 时间平移不变性和能量守恒  
+	考虑时间变换$T=t+\epsilon, Q_{k} = q_{k}$
+	我们有:
+	
+	$$\begin{aligned}\zeta = 1, \eta_{k} = 0\end{aligned}$$
+	
+	则相应的守恒量为:
+	
+	$$ \mathcal{H} = \text{const} $$
+	
+	即, 能量守恒对应于时间平移不变性.
+* 空间平移不变性与动量守恒  
+	考虑空间平移变换:
+	
+	$$ T = t, Q_{k} = q_{k} + \epsilon \eta_{k} $$
+	
+	则守恒量为:
+	
+	$$ p_{k} \eta_{k} = \text{const} $$
+	
+	即, 动量守恒对应于空间平移不变性.
+* 空间旋转不变性与角动量守恒  
+	由于三维旋转较为复杂, 我们作为例子仅考虑绕$z$ 轴的一个旋转.  
+	
+	$$T = t$$
+  $$Q_{1} = q_{1}\cos \epsilon + q_{2} \sin \epsilon$$
+  $$Q_{2} = -q_{1}\sin \epsilon + q_{2} \cos \epsilon$$
+  $$Q_{3} = q_{3}$$
+	
+	取$\epsilon\to 0$ 的极限(即,无穷小旋转),我们有:
+	
+	$$ \zeta=0, \eta_{1} = q_2, \eta_{2} = -q_1, \eta_3 = 0$$
+	
+	对应的守恒量为:
+	
+	$$ p_1 q_2 - p_2 q_1 = \text{const} $$
+	
+	这就是角动量的$z$ 分量,即空间旋转对称性对应于角动量守恒.  
+
+
+[^1]: 这一部分实际需要证明, 依赖于泛函上的Taylor定理,由于思路与普通的Taylor定理相似,此处不予证明,感兴趣的可以参考Atland & Simons第一章,或Bruce的The Calculus of Variations, Appendix A.1.
+[^2]: 此处和下面均默认采用爱因斯坦求和约定.
+

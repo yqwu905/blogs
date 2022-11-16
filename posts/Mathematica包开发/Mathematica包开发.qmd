@@ -1,0 +1,239 @@
+---
+title: Mathematica包开发(一)
+author: "Yuanqing Wu"
+description: "Mathematica长期以来都给人一种大号计算器的感觉, 这里介绍一个更接近于传统意义上的编程语言中的应用: 将代码组织并封装成一个包"
+tags: ['Computer Science']
+categories:
+  - Computer Science
+date: "04/01/2022"
+photos: https://image.yqwu.site/i/hz15.png
+---
+# Mathematica包开发(一)
+最近需要写一个Mathematica的Package, 但网上教程并不多,
+[官方文档](https://reference.wolfram.com/language/tutorial/ModularityAndTheNamingOfThings.html.zh?source=footer)冗长而又充斥着机翻, 因此做个笔记备忘.  
+本篇将主要介绍一下常用于创建包的函数, Paclet和文档等内容将放在下一篇.
+
+## 局域变量:`Module`和`With`
+Wolfram语言中提供了一些方式来创建局部变量. 最常用的是`Module`和`With`.  
+
+* `Module`的定义:
+  * `Module[{x, y, ...}, expr]`.
+  * `Module[{x=x0, ...}, expr]`.
+  * `Module`会将`x,y,...`作为module内的局域变量处理, 并override module外的变量.
+  * 如果`Module`对局域变量赋有初值, 那么该局域变量会在module执行前被赋值. 常见
+  的作用为将一个同名全局变量的值赋给局域变量.
+  * Examples
+    * 局域变量
+      ```wolfram
+      In[1]:= x = 10;
+      Out[1]:= 10
+      In[2]:= Module[{x},
+                x = 9;
+                x
+              ]
+      Out[2]:= 9
+      In[3]:= x
+      Out[3]:= 10
+      ```
+    * 局域函数
+      ```wolfram
+      In[1]:= fib[n_] :=
+                Module[{f},
+                 f[1] = f[2] = 1;
+                 f[i_] := f[i] = f[i - 1] + f[i - 2];
+                 f[n]
+                ]
+      In[2]:= fib[10]
+      Out[2]:= 55
+      In[3]:= f
+      Out[3]:= f
+      ```
+    * 赋有初始值的module
+      ```wolfram
+      gcd[m0_, n0_] :=
+        Module[{m = m0, n = n0},
+         While[n != 0, {m, n} = {n, Mod[m, n]}];
+         m
+        ]
+      ```
+* `With`的定义
+  * `With[{x=x0,y=y0, ... },expr]`
+  * 和`Module`不同, `With`必须给定局域变量的初始值, 同时, `With`会在执行前将所有局域
+    变量替换成给定的初始值, 这意味着`With`创建的是**局域常数**
+  * Examples
+    * 尝试修改`With`声明的常量值:
+      ```wolfram
+      In[1]:= With[{x = 10},
+                x = x + 1;
+              ]
+      Out[1]:= Set::setraw: Cannot assign to raw object 10.
+      ```
+      可以看出`With`的效果类似于c中的`#define`, 在执行前直接被替换为给定值.
+    * `With`的执行效率高于`Module`:
+      ```wolfram
+      In[1]:= Timing[Do[Module[{x = 5}, x;], {10^5}]]
+      Out[1]:= {0.109375, Null}
+      In[2]:= Timing[Do[With[{x = 5}, x;], {10^5}]]
+      Out[2]:= {0.046875, Null}
+      ```
+    * 注意,`With`中执行的是**替换**, 因此可以代入`Hold`的表达式:
+      ```wolfram
+      In[1]:= With[{x=y}, Hold[x]]
+      Out[1]:= Hold[y]
+      In[2]:= With[{x=y}, Hold[x]]
+      Out[2]:= Hold[x$138]
+      ```
+      其中,`x$138`的形式是`Module`用了代表内部每一个局部变量的,形式均为`x$nnn`,
+      `nnn`为`Module`中任何形式使用变量的总次数, 记录于全局变量`$ModuleNumber`
+      中.
+
+## 全局变量的局域值:`Block`
+`Block`可以为一个全局变量创建一个局域值:
+```wolfram
+In[1]:= x = 10
+Out[1]:= 10
+In[2]:= Block[{x=1},x]
+Out[2]:= 1
+In[3]:= x
+Out[3]:= 10
+```
+可以看出`Block`在不改变全局变量已有赋值的情况下, 为全局变量创建了一个局域值.  
+`Module`和`Block`的区别主要在于:**`Module`是声明一个局域变量, 而`Block`是全局变量的
+一个局域值**:
+```wolfram
+In[1]:= m = i^2
+Out[1]:= i^2
+In[2]:= Block[{i = a}, i + m]
+Out[2]:= a + a^2
+In[3]:= Module[{i = a}, i + m]
+Out[3]:= a + i^2
+```
+从上面这个例子中你应当可以看出区别所在.
+
+## 命名空间:`Context`
+
+为了避免不同程序包中的符号命名冲突, Wolfram语言中引入了类似于C++的namespace的
+概念, 称为**上下文**:`Context`.  
+Wolfram语言中,任何变量名实际上都由两部分组成:上下文和变量名:  
+```
+context`name
+```
+任何上下文都以\`结尾, 当你启动一个Wofram进程时, 默认的上下文为`Global'`,可以通
+过`Context[]`或者`$Context`变量来查看当前的默认上下文.  
+另外, Wolfram还可以加载一系列的模块, 他们可能包含不同的上下文, 为此, Wolfram语
+言中引入了`$ContextPath`这一变量, 类似于系统的搜索路径, Wolfram会**首先**在
+`$ContextPath`的上下文中搜索, 之后才会搜索当前的上下文.
+```wolfram
+In[1]:= $Context
+Out[1]= Global`
+
+In[2]:= Context[]
+Out[2]= Global`
+
+In[3]:= $ContextPath
+Out[3]= {NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[4]:= a = 1
+Out[4]= 1
+
+In[5]:= Context[a]
+Out[5]= Global`
+
+In[6]:= System`b = 2
+Out[6]= 2
+
+In[7]:= Context[b]
+Out[7]= System`
+
+In[8]:= Global`b = 3
+Global`b::shdw: Symbol b appears in multiple contexts {Global`, System`}; definitions in context Global` may shadow or be shadowed by other definiti
+ons.
+Out[8]= 3
+
+In[9]:= b
+Out[9]= 2
+
+In[10]:= Global`b
+Out[10]= 3
+```
+可以使用`Begin`和`End`来创建和关闭一个新的上下文:
+```wolfram
+In[1]:= Begin["newContext`"] (* 相当于 $Context="newContext`" *)
+Out[1]= newContext`
+
+In[2]:= var1 = 100;
+        Context[var1]
+Out[2]= newContext`
+
+In[3]:= Context[]
+Out[3]= newContext`
+
+In[4]:= End[]
+Out[4]= newContext`
+
+In[5]:= Context[]
+Out[5]= Global`
+```
+在新的上下文中创建的变量无法只通过变量名访问:
+```wolfram
+In[1]:= var1
+Out[1]= Var1
+
+In[2]:= newContext`var1
+Out[2]= 100
+```
+将某一个上下文加入到`$ContextPath`中可以实现只是用变量名访问:
+```wolfram
+In[1]:= PrependTo[$ContextPath, "newContext`"]
+Out[1]= {newContext`, NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[2]:= var1
+Out[2]= 100
+```
+
+## 程序包:`Package`
+可以使用`BeginPackage`和`EndPackage`函数来创建一个程序包:
+```wolfram
+In[1]:= BeginPackage["newPackage`"]
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        EndPackage[]
+
+In[2]:= SumSquares[1, 2]
+Out[2]= 5
+
+In[3]:= $ContextPath
+Out[3]= {newPackage`, NaturalLanguageProcessingLoader`, System`, Global`}
+```
+可以看出, 创建Package会自动创建同名的上下文, 并自动添加到`$ContextPath`中.  
+同时, Wolfram语言中也可以声明私有成员, 例如, 上例中的`n`是可以修改的:
+```wolfram
+In[1]:= n=3;
+        SumSquares[1, 2]
+Out[1]= 9
+```
+可以通过在Package中创建``Private``上下文来声明私有成员:
+```wolfram
+In[1]:= BeginPackage["newPackage`"]
+        SumSquares::usage = "SumSquares[x, y] = x^2 + y^2"
+        Begin["`Private`"];
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        End[]
+        EndPackage[]
+
+In[2]:= SumSquares[1,2];
+Out[2]= 5
+
+In[3]:= n=3;
+        SumSquares[1,2];
+Out[2]= 5
+```
+位于`Private`环境内的函数和变量无法被在Package外部访问, 因此我们手动在Package内
+引用`SumSquares`函数, 使其能够被外部调用.
+
+## Something Else
+
+* 本文中大部分的例子来源于相应函数的文档, 还有一部分来自于Wolfram的讲座, 你可以
+从[这里](https://github.com/WolframChinaWL/WLProgramingTraining)获取到演示笔记本, 本节的内容对应于Module 7.
+* 关于创建Paclet包, 单元测试, 创建文档等相关内容会放在下篇中讨论.

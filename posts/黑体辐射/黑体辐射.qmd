@@ -1,0 +1,85 @@
+---
+title: 黑体辐射
+author: "Yuanqing Wu"
+description: "对于黑体辐射问题, 存在两种推导方式, 他们采用了不同的假设, 这里分别进行讨论, 并对比他们之间的等价性在哪."
+tags: ['统计力学']
+mathjax: true
+categories:
+  - Physics
+date: 2021-9-21
+photos: https://image.yqwu.site/i/hz28.jpg
+---
+
+# 黑体辐射
+
+## Bose的推导
+我们首先需要讨论一下黑体辐射体系的特征. 黑体辐射问题实际上讨论的是, 处于热平衡状态下的光子气体的分布. 有以下特征:
+
+* 光子是交换对称的, 即遵循**玻色分布**.
+* 在不考虑QED的情况下, 光子与光子间不存在相互作用, 即光子气体是**理想气体**.
+* 由于光子可以被吸收和发射, 因此体系的粒子数$N$ 是一个变量, 由热平衡条件决定, 即:要求
+	
+$$ \frac{\partial F}{\partial N} = 0 $$
+
+同时由定义可知:
+
+$$ \left(\frac{\partial F}{\partial N}\right)_{T,V} = \mu $$
+
+即光子气体**化学势为0**.
+
+那么我们可以立刻写出对于光子气, 所谓的Planck分布:
+
+$$ \overline{n}_{k} = \frac{1}{e^{\hbar \omega/T}-1} \tag{1}$$
+
+我们继续研究频率在$\omega\sim \omega+{\rm d} \omega$ 间的量子态数:  
+在波矢 $k$ 空间中, 半径为$k\sim k+{\rm d}k$ 的球壳内的本征振动数为:
+ 
+$$ \frac{V}{(2 \pi)^{3}}4 \pi k^{2}{\rm d}k $$
+
+ 注意到每个振动模式都相应的有两个偏振态, 因此上式需要乘2, 并代入$\omega=ck$, 我们得到$\omega\sim \omega+{\rm d} \omega$ 间的量子态数:
+ 
+$$ \frac{V \omega^{2} {\rm d} \omega}{\pi^{2}c^{3}} \tag{2}$$
+
+ 将量子态数式$(2)$乘以对应的占据数式$(1)$, 我们就得到了$\omega\sim \omega+{\rm d} \omega$ 间的光子数:
+  
+$$ {\rm d}N_{\omega} = \frac{V}{\pi^{2}c^{3}} \frac{\omega^{2}{\rm d}\omega}{e^{\hbar \omega/T}-1} \tag{3}$$
+
+相应的能量为式$(3)$乘 $\hbar \omega$:
+
+$$ {\rm d}E_{\omega} = \frac{V\hbar}{\pi^{2}c^{3}}\frac{\omega^{3}{\rm d} \omega}{e^{\hbar \omega/T}-1} $$
+
+
+## Planck的推导
+
+Planck的出发点是如下的假设:
+> 光子的能量一定为:
+> $$ \epsilon_{\omega} = n\hbar\omega,\quad n\in\mathbb{N} $$
+
+
+由此, 体系的配分函数为:
+
+$$ Z(\omega) = \sum_{n=0}^{\infty}e^{-n \beta \hbar \omega}  = \frac{1}{1-e^{-\beta \hbar \omega}} \tag{4}$$
+
+相应的平均能量为:
+
+$$ E_{\omega} = -\frac{{\rm d}}{{\rm d} \beta} \ln Z = \frac{\hbar \omega}{e^{\beta \hbar \omega}-1} \tag{5} $$
+
+$\omega\sim \omega+{\rm d} \omega$ 间的量子态数应当得到相同的结果, 将式$(2)$ 与式$(5)$ 相乘, 我们得到能量分布:
+
+$$ {\rm d} E_{\omega} = \frac{V\hbar}{\pi^{2}c^{3}}\frac{\omega^{3}{\rm d} \omega}{e^{\hbar \omega/T} - 1}$$
+
+
+## 关于两种推导的讨论
+
+对于两者的推导, 频率区间内的量子态的数量是相同的, 不同之处在于, 对于Bose的推导, 我们是求得对于其中每个量子态的平均占有数, 再乘以单光子的能量$\hbar \omega$, 而对于Planck的推导, 则是求得在这个态上的平均能量, 直接乘以态密度 那么为什么这两者能得出相同的结论呢?  
+我的理解是, Planck的假设实际上包含了Bose统计的假设. 光子的能量为$n \hbar \omega$ 意味着什么? 我们都知道, 频率为$\omega$ 的光子能量为$\hbar \omega$, 因此这一假设实际上包含两重含义:
+
+* 频率为$\omega$ 的态上的光子数是任意($n$)的.
+* 光子之间是不可分辨(否则不同的n会相应的有一个不同的组合系数).
+
+所以Planck的做法(式$(4)$)实际上是在对光子数进行求和, 相应的, 得到的平均占有数应当为:
+ 
+$$ \frac{E_{\omega}}{\hbar \omega} = \frac{1}{e^{\beta \hbar \omega}-1} $$
+
+ 正与Bose统计导出的光子气平均占有数相同.
+

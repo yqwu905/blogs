@@ -1,0 +1,113 @@
+---
+title: Car-Parrinello 分子动力学
+author: "Yuanqing Wu"
+description: "直接将DFT计算应用在分子动力学的每一步上在计算成本上过于高昂, 因此, 引入了一种简化的分子动力学方法: Car-Parrinello分子动力学."
+tags: ['CPMD', 'DFT']
+mathjax: true
+categories:
+  - Physics
+date: "29/10/2021"
+photos: https://image.yqwu.site/i/hz24.jpg
+---
+
+# Car-Parrinello 分子动力学
+
+这篇文章主要基于Car-Parrinello 1985年的PRL文章[<sup>[1]</sup>](#1)与Understanding Molecular Simulations一书[<sup>[2]</sup>](#2).
+
+## Introduction
+
+简单来说, CPMD(Car-Parrinello molecular dynamics)是一种*ab initio* MD方法. 在DFT理论得到提出并应用后, 通过DFT计算出体系的势后, 再执行MD的算法.
+这就是BOMD(Born-Oppenheimer MD)的思想. BOMD通过BO近似将原子核与电子解耦, 但相应的缺点就是我们需要进行计算耗时较长的SCF. 为提升AIMD的计算效率, Car和Parrinello在1985年发表了一篇文章, 提供了CPMD这一方法. CPMD不将原子核与电子的运动解耦, 而是为电子引入一个虚质量, 并直接进行简单经典MD算法.
+
+## Theory
+
+### 基本思路
+
+对于一个给定的体系, 其Hamiltonian由KS泛函给出:
+
+$$ H_{KS}({\bf r}) = -\frac{1}{2} \nabla^2 + V_{ext}({\bf r}) + V_{KS}[n]({\bf r})$$
+
+其中$V_{KS}[n]({\bf r})$ 是电子密度的泛函. 常规的SCF做法是给定一个初始电子密度$n({\bf r})$,
+然后重复计算 $V_{KS}[n]({\bf r})$和$n({\bf r})$ 直到自洽. 但是我们可以通过Rayleigh-Ritz方法来直接
+对泛函进行最小化, 求得电子基态.  
+一旦我们给定了体系电子波函数的一组基 $\{b_{k}({\bf r})\}$ , 体系的波函数可以写为:
+
+$$ \psi_{i}({\bf r}) = \sum^{N_{b}}_{k=1}c_{ik}b_{k}({\bf r}),\;i=1,\cdots,N_{e}$$
+
+则$H_{KS}$ 现在就是系数$\{c_{ik}\}$ 的一个多元函数. 求解电子基态的任务变为求使$E(\{c_{ik}\} $ 最小的$\{c_{ik}\}$.  
+同时为了保证正交性, 我们需要带有约束:
+
+$$ \int \psi_{i}^{*}({\bf r}) \psi_{j}({\bf r}) = \delta_{ij}$$
+
+即:
+
+$$ \sum_{k,k'=1}^{N_{b}}c^{*}_{ik} c_{jk'} \left(\int b_{k}^{*}({\bf r}) b_{k'}({\bf r})\right) - \delta_{ij} = 0 $$
+
+但很明显, 我们面对的是一个$N_{b}\times N_{e}$维的函数优化问题, 计算量非常巨大.  
+幸运的是, 在两年前, Kirkpatrick, Delatt和Vecchi提出了著名的**模拟退火**算法[<sup>[3]</sup>](#3), 使得我们有希望快速的
+求解这类优化问题. 同时, Car和Parrinello意识到, 模拟退火算法的*动力学*是Metropolis算法, 这一算法
+在相空间中搜索最小值非常高校, 但问题在于我们得到的轨迹没有物理意义. Car和Parrinello构建了如下的
+Lagrangian, 通过牛顿力学对参数进行优化:
+
+$$ \mathcal{L} =  \underbrace{\sum_{i}\frac{1}{2}\mu \int |\dot{\psi}_{i}({\bf r})|^2 {\rm d}{\bf r}}_{\text{Damping}} - E[\{\psi_{i}\}] + \underbrace{\sum_{ij}\Lambda_{ij}\left[\int \psi_{i}^{*}({\bf r})\psi_{j}({\bf r})-\delta_{ij}\right]}_{\text{Lagranian multipliers}}$$
+
+可以看出, Car和Parrinello增加了两项:  
+
+* 第一项阻尼项, 其中$\mu$为电子的虚拟质量.
+* 第三项拉格朗日乘子项, 用于满足约束条件.
+
+### CPMD
+
+我们将原子核的部分显式的写出:
+
+$$  \begin{aligned}\mathcal{L} = &\sum \frac{1}{2}\mu \int|\dot{\psi}({\bf r})|^{2} + \sum_{I}\frac{1}{2}M_{I}\dot{{\bf R}_{I}}^{2}+\sum_{v}\frac{1}{2}\mu_{v}\dot{\alpha}^{2}_{v}\\
+&-E[\{\psi_{i}\},\{{\bf R}_{I}\}, \{\alpha_{v}\}]+\sum_{ij}\Lambda_{ij}\left[\int \psi_{i}^{*}({\bf r})\psi_{j}({\bf r}) - \delta_{ij}\right]\end{aligned} $$
+
+其中, ${\bf R}_{I}$为原子核的坐标, $M_{I}$为原子核质量, $\alpha_{v}$ 为影响体系能量的外参量, 例如压强, 体积等.
+我们也相应的为$\alpha_{v}$添加了阻尼项, 带有虚质量$\mu_{v}$.  
+从上式中, 我们可以得到几个参数在相空间中的运动方程:  
+
+$$ \left\{\begin{aligned}
+&\mu \ddot{\psi}_{i} = -\frac{\delta E}{\delta \psi_{i}^{*}} + \sum_{k}\Lambda_{ik}\psi_{k}\\
+&M_{I}\ddot{{\bf R}}_{I} = - \nabla_{{\bf R}_{I}}E\\
+&\mu_{v}\ddot{\alpha}_{v} = -\frac{\partial E}{\partial \alpha_{v}}
+\end{aligned}\right.$$
+
+上式即为CPMD的核心运动方程. 对于$\psi_{i}$, 我们更进一步将其展开为${\bf c}_{i} = (c_{i1}, \cdots, c_{iN_{b}})$的方程:
+
+$$ \mu \ddot{{\bf c}}_{i} = -\left(H {\bf c}_{i} - \sum_{k}\lambda_{ik}{\bf c}_{k}\right)$$
+
+之后, 就可以通过经典的MD算法计算.
+
+## Discussions
+
+### 与BOMD对比
+
+CPMD的优势是一目了然的: 我们不需要每一步都完整求解一次DFT. 我们只需要在最开始的时候进行一次DFT计算,
+求得$\{c_{ik}\}$的初始值即可.  
+而缺点相应的也有:
+
+* 模型中多了一个超参数$\mu$.
+* 稳定收敛的时间步长比BOMD要小(解释见后).
+* 精确度低于BOMD.
+
+### 虚质量
+
+CPMD的关键就是虚质量的引入, 一个很自然的问题就是, 虚质量该如何选取? 它会如何影响计算的结果?
+答案是, 理论上虚质量越小计算越精确. 在CPMD中, 随着体系原子核的运动, 我们不重新计算电子波函数, 而是
+基于运动方程进行更新, 这一做法的正确性是由绝热定理保证的. 而当虚质量较大时, 体系中会存在较大的从原子核
+到电子的动能转移, 从而破坏绝热条件, 导致计算出现误差.  
+另一方面, 较小的电子虚质量, 要求MD算法采用更小的时间步, 来保证计算收敛.  
+一般来说, 电子虚质量的取值为$400 \sim 800 \;{\rm a.u.}$.  
+另外, 已被证明, 当$\mu\to 0$的极限下, CPMD收敛于BOMD.
+
+### 拉格朗日乘子的确定
+在CPMD中, 拉格朗日乘子也随着时间演化, 通过SHAKE算法进行更新, 如果你感兴趣, 可以查阅参考资料.[<sup>[4]</sup>](#4)
+
+## Reference
+
+* <span id="1">[1] Phys. Rev. Lett., 55 (1985)</span>  
+* <span id="2">[2] Daan Frenkel, Berend Smit, Understanding Molecular Simulations, Academic Press (2002)</span>
+* <span id="3">[3] Science, 22, 671-680.</span>
+* <span id="4">[4] arXiv:cond-mat/0610552.</span>
+

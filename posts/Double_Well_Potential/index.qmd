@@ -1,0 +1,84 @@
+---
+title: "双阱势问题"
+description: "量子力学中的双阱势问题"
+author: "Yuanqing Wu"
+date: "14/11/2022"
+format:
+  html:
+    code-fold: true
+jupyter: julia-1.8
+---
+
+## 问题描述
+
+顾名思义, 双阱势是由两个势阱组成的体系. 这样的体系有很多可能
+的势函数, 例如:
+
+* 方势阱:
+$$ V_{\text{sq}} = \Biggr\{
+\begin{aligned}
+  & 0 \quad \text{ if } |x-(\frac{a}{2} \pm b)| < \frac{c}{2}\\
+  & V_0 \quad \text{otherwise}
+\end{aligned}
+$$
+* 由两个抛物线势阱构成的双阱势:
+$$ V_{\text{para}}(x) = \frac{V_{\text{cusp}}}{b^{2}} \Biggl(\Biggl|x-\frac{a}{2}\Biggr| - b \Biggr)^{2} $$
+* 或者, 常见于对称性破缺中的**墨西哥帽**势:
+$$ V_{\text{m}}(x) = \frac{V_{\text{max}}}{b^{4}} \Biggl(\Biggl(x-\frac{a}{2}\Biggr)^{2} - b^{2}\Biggr)$$
+
+其中, $a$ 是体系整体的长度, $b$ 是体系中心到势阱中心的距离, $c$ 是势阱的宽度.
+图 @fig-potential-examples 展示了这几种势的样子.
+
+```{julia}
+#| fig-cap: 双阱势的一些可能的例子
+#| label: fig-potential-examples
+using Plots, LaTeXStrings
+theme(:ggplot2, yticks=nothing, grid=nothing, linewidth=2)
+a,b,c = 1.0, 0.25, 0.3
+v0,vcusp,vmax = 1.0, 1.5, 0.4
+vsq(x) = (abs(x-0.5a+b)<0.5c||abs(x-0.5a-b)<0.5c) ? 0 : v0
+vpara(x) = vcusp/(b^2)*(abs(x-0.5a)-b)^2
+vm(x) = vmax/(b^4)*((x-a/2)^2-b^2)^2
+xticks = (
+  [0.0,0.5a-b,0.5a,0.5a+b],
+  [L"0", L"\frac{1}{2}-\frac{b}{a}", L"\frac{1}{2}", L"\frac{1}{2}+\frac{b}{a}"]
+)
+
+plt = plot(
+  [vsq, vpara, vm], 0:0.01:1,
+  xlabel = L"x/a", ylabel = L"V(x)",
+  label = [L"V_{\rm{sq}}" L"V_{\rm{para}}" L"V_{\rm{m}}"],
+  annotation = [
+    (0.5, vpara(0.5)+0.1, (L"V_{\rm{cusp}}", 10)),
+    (0.5, vm(0.5)+0.1, (L"V_{\rm{max}}", 10)),
+    (0.15, v0+0.1, (L"V_0", 10)),
+    (0.5a-b, 0.7v0-0.1, (L"c", 10))
+  ], xticks=xticks
+)
+plot!(x->v0, 0:0.5:1, label=nothing, ls=:dot)
+plot!(x->0.7v0, 0.5a-b-0.5c:0.1c:0.5a-b+0.5c, label=nothing, c=:black, arrow=(:closed, :both), lw=1)
+plt
+```
+
+接下来我们来求解双阱势问题. 不难看出, 当势垒高度趋向无穷时,
+无限深方势阱的解也是双阱势问题的解. 因此很直观的, 我们取无限
+深方式阱的解$\ket{n}$作为基:
+
+$$ \psi_{n}(x) = \braket{x|n} = \Biggl\{
+\begin{aligned}
+  & \sqrt{\frac{2}{a}}\sin \Biggl(\frac{n \pi x}{a}\Biggr) \quad & \text{if } 0<x<a\\
+  & 0 & \text{otherwise}
+\end{aligned}$$
+
+假设双阱势解为:
+
+$$ \ket{a} = c_{m} \ket{m} $$
+
+那么由定态Schrodinger方程, 我们得到:
+
+$$ H_{nm}c_{m} = E c_{n} $$
+
+其中, 矩阵元$H_{nm}$ 为:
+
+$$ H_{nm} = \bra{n}H\ket{m} = \frac{2}{a}\int _{0}^{a} \sin \Biggl(\frac{n \pi x}{a}\Biggr)V(x)\sin\Biggl(\frac{n \pi x}{a}\Biggr) {\rm d}x $$
+
