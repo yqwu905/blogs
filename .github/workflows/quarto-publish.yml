@@ -16,7 +16,7 @@ jobs:
           # uncomment below and fill to pin a version
       - uses: julia-actions/setup-julia@v1
         with:
-          version: 1.0.4
+          version: 1.8
       - run: julia -e 'using Pkg; Pkg.add("IJulia")'
       - name: Publish to GitHub Pages (and render)
         uses: quarto-dev/quarto-actions/publish@v2
