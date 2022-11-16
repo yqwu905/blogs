@@ -21,7 +21,7 @@ jobs:
           version: 1.8
       - run: pwd
       - run: ls
-      - run: julia -t 8 -e 'using Pkg;deps=readlines("requirements.txt");Threads.@threads for dep in deps Pkg.add(dep) end'
+      - run: julia -e 'using Pkg;deps=readlines("requirements.txt");for dep in deps Pkg.add(dep) end'
       - run: jupyter kernelspec list
       - name: Publish to GitHub Pages (and render)
         uses: quarto-dev/quarto-actions/publish@v2
