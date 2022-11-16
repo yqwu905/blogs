@@ -21,7 +21,7 @@ jobs:
           version: 1.8
       - run: pwd
       - run: ls
-      - run: julia -e 'using Pkg,TOML;deps=TOML.parsefile("Project.toml");for dep in deps["deps"] println(dep.first) end'
+      - run: julia -e 'using Pkg,TOML;deps=TOML.parsefile("Project.toml");for dep in deps["deps"] Pkg.add(dep.first) end'
       # - run: julia -e 'using Pkg; Pkg.add("IJulia")'
       - run: jupyter kernelspec list
       - name: Publish to GitHub Pages (and render)
