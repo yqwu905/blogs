@@ -2,7 +2,8 @@
 title: "自动微分(Automatic Differentiation)"
 description: "求任意函数的微分是数值方法中很重要的一个内容, 不同于计算物理中常用的简单数值微分, 这里我们介绍在ML等领域中常用的另一种微分方式: 自动微分"
 author: "Yuanqing Wu"
-date: "26/08/2021"
+date: "08/26/2021"
+image: https://image.yqwu.site/i/hz27.jpg
 jupyter: julia-1.8
 ---
 

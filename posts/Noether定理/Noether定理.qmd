@@ -7,7 +7,7 @@ mathjax: true
 categories:
   - Physics
 date: "03/04/2021"
-photos: https://image.yqwu.site/i/hz26.jpg
+image: https://image.yqwu.site/i/hz26.jpg
 ---
 # Noether定理
 

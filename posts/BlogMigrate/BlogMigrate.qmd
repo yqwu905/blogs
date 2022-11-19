@@ -3,8 +3,8 @@ title: 网站迁移记录
 author: "Yuanqing Wu"
 description: "记录一下迁移网站的过程, 以作备忘之需."
 tags: ['杂谈', 'Memo']
-date: "09/03/2022"
-photos: https://image.yqwu.site/i/hz23.jpg
+date: "03/09/2022"
+image: https://image.yqwu.site/i/hz23.jpg
 ---
 
 # 网站迁移记录

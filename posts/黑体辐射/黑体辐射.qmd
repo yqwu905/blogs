@@ -6,8 +6,8 @@ tags: ['统计力学']
 mathjax: true
 categories:
   - Physics
-date: 2021-9-21
-photos: https://image.yqwu.site/i/hz28.jpg
+date: 09/21/2021
+image: https://image.yqwu.site/i/hz28.jpg
 ---
 
 # 黑体辐射

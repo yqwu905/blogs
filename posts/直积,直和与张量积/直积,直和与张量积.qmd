@@ -7,8 +7,8 @@ mathjax: true
 categories:
   - Maths
   - Physics
-date: 2020-10-14
-photos: https://image.yqwu.site/i/hz27.jpg
+date: 10/14/2020
+image: https://image.yqwu.site/i/hz27.jpg
 ---
 # 直积,直和与张量积
 
@@ -57,8 +57,6 @@ photos: https://image.yqwu.site/i/hz27.jpg
 &=\begin{pmatrix}a^1{}_1 b^1{}_1 & a^1{}_1 b^1{}_2 & a^1{}_2 b^1{}_1& a^1{}_2 b^1{}_2\\ a^1{}_1b^2{}_1 & a^1{}_1b^2{}_2 & a^1{}_2 b^2{}_1 & a^1{}_2 b^2{}_2\\ a^2{}_1a^1{}_1 & a^2{}_1b^1{}_2 & a^2{}_2 b^1{}_1 & a^2{}_2 b^1{}_2\\ a^2{}_1a^2{}_1 & a^2{}_1b^2{}_2 & a^2{}_2 b^2{}_1 & a^2{}_2 b^2{}_2\\ \end{pmatrix} 
 \end{aligned}$$
 > $V,W,U,X$为定义在域$\mathbb{F}$上的**矢量空间**. $p:V\times W\to X$ 为一个多线性映射, 则X为$V\otimes W$, $p$为$v\otimes w$,若对于**任意**多线性映射$A:V\times W\to U$, 有且仅有一个线性映射$A^\otimes :X\to U$, 使得$A=A^\otimes \circ p$
-
-![202106292058](http://image.yqwu.site/img/202106292058.png)
 
 张量积的性质:
 

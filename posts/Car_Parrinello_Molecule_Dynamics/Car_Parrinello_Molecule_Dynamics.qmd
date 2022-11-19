@@ -6,8 +6,8 @@ tags: ['CPMD', 'DFT']
 mathjax: true
 categories:
   - Physics
-date: "29/10/2021"
-photos: https://image.yqwu.site/i/hz24.jpg
+date: "10/29/2021"
+image: https://image.yqwu.site/i/hz24.jpg
 ---
 
 # Car-Parrinello 分子动力学
