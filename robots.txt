@@ -1,1 +1,1 @@
-Sitemap: https://github.com/yqwu905/blogs/sitemap.xml
+Sitemap: https://yqwu.site/sitemap.xml

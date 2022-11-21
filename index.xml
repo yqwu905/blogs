@@ -1,0 +1,1193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Yuanqing Wu&#39;s Blog</title>
+<link>https://yqwu.site/index.html</link>
+<atom:link href="https://yqwu.site/index.xml" rel="self" type="application/rss+xml"/>
+<description>Personal blog of Yuanqing Wu</description>
+<generator>quarto-1.2.269</generator>
+<lastBuildDate>Mon, 14 Nov 2022 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>双阱势问题</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/Double_Well_Potential/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="问题描述" class="level2">
+<h2 class="anchored" data-anchor-id="问题描述">问题描述</h2>
+<p>顾名思义, 双阱势是由两个势阱组成的体系. 这样的体系有很多可能 的势函数, 例如:</p>
+<ul>
+<li>方势阱: <img src="https://latex.codecogs.com/png.latex?%20V_%7B%5Ctext%7Bsq%7D%7D%20=%20%5CBiggr%5C%7B%0A%5Cbegin%7Baligned%7D%0A&amp;%200%20%5Cquad%20%5Ctext%7B%20if%20%7D%20%7Cx-(%5Cfrac%7Ba%7D%7B2%7D%20%5Cpm%20b)%7C%20%3C%20%5Cfrac%7Bc%7D%7B2%7D%5C%5C%0A&amp;%20V_0%20%5Cquad%20%5Ctext%7Botherwise%7D%0A%5Cend%7Baligned%7D%0A"></li>
+<li>由两个抛物线势阱构成的双阱势: <img src="https://latex.codecogs.com/png.latex?%20V_%7B%5Ctext%7Bpara%7D%7D(x)%20=%20%5Cfrac%7BV_%7B%5Ctext%7Bcusp%7D%7D%7D%7Bb%5E%7B2%7D%7D%20%5CBiggl(%5CBiggl%7Cx-%5Cfrac%7Ba%7D%7B2%7D%5CBiggr%7C%20-%20b%20%5CBiggr)%5E%7B2%7D%20"></li>
+<li>或者, 常见于对称性破缺中的<strong>墨西哥帽</strong>势: <img src="https://latex.codecogs.com/png.latex?%20V_%7B%5Ctext%7Bm%7D%7D(x)%20=%20%5Cfrac%7BV_%7B%5Ctext%7Bmax%7D%7D%7D%7Bb%5E%7B4%7D%7D%20%5CBiggl(%5CBiggl(x-%5Cfrac%7Ba%7D%7B2%7D%5CBiggr)%5E%7B2%7D%20-%20b%5E%7B2%7D%5CBiggr)"></li>
+</ul>
+<p>其中, <img src="https://latex.codecogs.com/png.latex?a"> 是体系整体的长度, <img src="https://latex.codecogs.com/png.latex?b"> 是体系中心到势阱中心的距离, <img src="https://latex.codecogs.com/png.latex?c"> 是势阱的宽度. 图 Figure&nbsp;1 展示了这几种势的样子.</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><span class="im" style="color: #00769E;">using</span> <span class="bu" style="color: null;">Plots</span>, <span class="bu" style="color: null;">LaTeXStrings</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;">theme</span>(<span class="op" style="color: #5E5E5E;">:</span>ggplot2, yticks<span class="op" style="color: #5E5E5E;">=</span><span class="cn" style="color: #8f5902;">nothing</span>, grid<span class="op" style="color: #5E5E5E;">=</span><span class="cn" style="color: #8f5902;">nothing</span>, linewidth<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">2</span>)</span>
+<span id="cb1-3">a,b,c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1.0</span>, <span class="fl" style="color: #AD0000;">0.25</span>, <span class="fl" style="color: #AD0000;">0.3</span></span>
+<span id="cb1-4">v0,vcusp,vmax <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1.0</span>, <span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">0.4</span></span>
+<span id="cb1-5"><span class="fu" style="color: #4758AB;">vsq</span>(x) <span class="op" style="color: #5E5E5E;">=</span> (<span class="fu" style="color: #4758AB;">abs</span>(x<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">+</span>b)<span class="op" style="color: #5E5E5E;">&lt;</span><span class="fl" style="color: #AD0000;">0.5</span>c<span class="op" style="color: #5E5E5E;">||</span><span class="fu" style="color: #4758AB;">abs</span>(x<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">-</span>b)<span class="op" style="color: #5E5E5E;">&lt;</span><span class="fl" style="color: #AD0000;">0.5</span>c) ? <span class="fl" style="color: #AD0000;">0</span> <span class="op" style="color: #5E5E5E;">:</span> v0</span>
+<span id="cb1-6"><span class="fu" style="color: #4758AB;">vpara</span>(x) <span class="op" style="color: #5E5E5E;">=</span> vcusp<span class="op" style="color: #5E5E5E;">/</span>(b<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span>)<span class="fu" style="color: #4758AB;">*</span>(<span class="fu" style="color: #4758AB;">abs</span>(x<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>a)<span class="op" style="color: #5E5E5E;">-</span>b)<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span></span>
+<span id="cb1-7"><span class="fu" style="color: #4758AB;">vm</span>(x) <span class="op" style="color: #5E5E5E;">=</span> vmax<span class="op" style="color: #5E5E5E;">/</span>(b<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">4</span>)<span class="fu" style="color: #4758AB;">*</span>((x<span class="op" style="color: #5E5E5E;">-</span>a<span class="op" style="color: #5E5E5E;">/</span><span class="fl" style="color: #AD0000;">2</span>)<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">-</span>b<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span>)<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span></span>
+<span id="cb1-8">xticks <span class="op" style="color: #5E5E5E;">=</span> (</span>
+<span id="cb1-9">  [<span class="fl" style="color: #AD0000;">0.0</span>,<span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">-</span>b,<span class="fl" style="color: #AD0000;">0.5</span>a,<span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">+</span>b],</span>
+<span id="cb1-10">  [L<span class="st" style="color: #20794D;">"0"</span>, L<span class="st" style="color: #20794D;">"</span><span class="sc" style="color: #5E5E5E;">\f</span><span class="st" style="color: #20794D;">rac{1}{2}-</span><span class="sc" style="color: #5E5E5E;">\f</span><span class="st" style="color: #20794D;">rac{b}{a}"</span>, L<span class="st" style="color: #20794D;">"</span><span class="sc" style="color: #5E5E5E;">\f</span><span class="st" style="color: #20794D;">rac{1}{2}"</span>, L<span class="st" style="color: #20794D;">"</span><span class="sc" style="color: #5E5E5E;">\f</span><span class="st" style="color: #20794D;">rac{1}{2}+</span><span class="sc" style="color: #5E5E5E;">\f</span><span class="st" style="color: #20794D;">rac{b}{a}"</span>]</span>
+<span id="cb1-11">)</span>
+<span id="cb1-12"></span>
+<span id="cb1-13">plt <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">plot</span>(</span>
+<span id="cb1-14">  [vsq, vpara, vm], <span class="fl" style="color: #AD0000;">0</span><span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">0.01</span><span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">1</span>,</span>
+<span id="cb1-15">  xlabel <span class="op" style="color: #5E5E5E;">=</span> L<span class="st" style="color: #20794D;">"x/a"</span>, ylabel <span class="op" style="color: #5E5E5E;">=</span> L<span class="st" style="color: #20794D;">"V(x)"</span>,</span>
+<span id="cb1-16">  label <span class="op" style="color: #5E5E5E;">=</span> [L<span class="st" style="color: #20794D;">"V_{</span><span class="sc" style="color: #5E5E5E;">\r</span><span class="st" style="color: #20794D;">m{sq}}"</span> L<span class="st" style="color: #20794D;">"V_{</span><span class="sc" style="color: #5E5E5E;">\r</span><span class="st" style="color: #20794D;">m{para}}"</span> L<span class="st" style="color: #20794D;">"V_{</span><span class="sc" style="color: #5E5E5E;">\r</span><span class="st" style="color: #20794D;">m{m}}"</span>],</span>
+<span id="cb1-17">  annotation <span class="op" style="color: #5E5E5E;">=</span> [</span>
+<span id="cb1-18">    (<span class="fl" style="color: #AD0000;">0.5</span>, <span class="fu" style="color: #4758AB;">vpara</span>(<span class="fl" style="color: #AD0000;">0.5</span>)<span class="op" style="color: #5E5E5E;">+</span><span class="fl" style="color: #AD0000;">0.1</span>, (L<span class="st" style="color: #20794D;">"V_{</span><span class="sc" style="color: #5E5E5E;">\r</span><span class="st" style="color: #20794D;">m{cusp}}"</span>, <span class="fl" style="color: #AD0000;">10</span>)),</span>
+<span id="cb1-19">    (<span class="fl" style="color: #AD0000;">0.5</span>, <span class="fu" style="color: #4758AB;">vm</span>(<span class="fl" style="color: #AD0000;">0.5</span>)<span class="op" style="color: #5E5E5E;">+</span><span class="fl" style="color: #AD0000;">0.1</span>, (L<span class="st" style="color: #20794D;">"V_{</span><span class="sc" style="color: #5E5E5E;">\r</span><span class="st" style="color: #20794D;">m{max}}"</span>, <span class="fl" style="color: #AD0000;">10</span>)),</span>
+<span id="cb1-20">    (<span class="fl" style="color: #AD0000;">0.15</span>, v0<span class="op" style="color: #5E5E5E;">+</span><span class="fl" style="color: #AD0000;">0.1</span>, (L<span class="st" style="color: #20794D;">"V_0"</span>, <span class="fl" style="color: #AD0000;">10</span>)),</span>
+<span id="cb1-21">    (<span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">-</span>b, <span class="fl" style="color: #AD0000;">0.7</span>v0<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.1</span>, (L<span class="st" style="color: #20794D;">"c"</span>, <span class="fl" style="color: #AD0000;">10</span>))</span>
+<span id="cb1-22">  ], xticks<span class="op" style="color: #5E5E5E;">=</span>xticks</span>
+<span id="cb1-23">)</span>
+<span id="cb1-24"><span class="fu" style="color: #4758AB;">plot!</span>(x<span class="op" style="color: #5E5E5E;">-&gt;</span>v0, <span class="fl" style="color: #AD0000;">0</span><span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">0.5</span><span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">1</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="cn" style="color: #8f5902;">nothing</span>, ls<span class="op" style="color: #5E5E5E;">=:</span>dot)</span>
+<span id="cb1-25"><span class="fu" style="color: #4758AB;">plot!</span>(x<span class="op" style="color: #5E5E5E;">-&gt;</span><span class="fl" style="color: #AD0000;">0.7</span>v0, <span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">-</span>b<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>c<span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">0.1</span>c<span class="op" style="color: #5E5E5E;">:</span><span class="fl" style="color: #AD0000;">0.5</span>a<span class="op" style="color: #5E5E5E;">-</span>b<span class="op" style="color: #5E5E5E;">+</span><span class="fl" style="color: #AD0000;">0.5</span>c, label<span class="op" style="color: #5E5E5E;">=</span><span class="cn" style="color: #8f5902;">nothing</span>, c<span class="op" style="color: #5E5E5E;">=:</span>black, arrow<span class="op" style="color: #5E5E5E;">=</span>(<span class="op" style="color: #5E5E5E;">:</span>closed, <span class="op" style="color: #5E5E5E;">:</span>both), lw<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">1</span>)</span>
+<span id="cb1-26">plt</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div id="fig-potential-examples" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="https://yqwu.site/posts/Double_Well_Potential/index_files/figure-html/fig-potential-examples-output-1.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;1: 双阱势的一些可能的例子</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>接下来我们来求解双阱势问题. 不难看出, 当势垒高度趋向无穷时, 无限深方势阱的解也是双阱势问题的解. 因此很直观的, 我们取无限 深方式阱的解<img src="https://latex.codecogs.com/png.latex?%5Cket%7Bn%7D">作为基:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cpsi_%7Bn%7D(x)%20=%20%5Cbraket%7Bx%7Cn%7D%20=%20%5CBiggl%5C%7B%0A%5Cbegin%7Baligned%7D%0A%20%20&amp;%20%5Csqrt%7B%5Cfrac%7B2%7D%7Ba%7D%7D%5Csin%20%5CBiggl(%5Cfrac%7Bn%20%5Cpi%20x%7D%7Ba%7D%5CBiggr)%20%5Cquad%20&amp;%20%5Ctext%7Bif%20%7D%200%3Cx%3Ca%5C%5C%0A%20%20&amp;%200%20&amp;%20%5Ctext%7Botherwise%7D%0A%5Cend%7Baligned%7D"></p>
+<p>假设双阱势解为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cket%7Ba%7D%20=%20c_%7Bm%7D%20%5Cket%7Bm%7D%20"></p>
+<p>那么由定态Schrodinger方程, 我们得到:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20H_%7Bnm%7Dc_%7Bm%7D%20=%20E%20c_%7Bn%7D%20"></p>
+<p>其中, 矩阵元<img src="https://latex.codecogs.com/png.latex?H_%7Bnm%7D"> 为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20H_%7Bnm%7D%20=%20%5Cbra%7Bn%7DH%5Cket%7Bm%7D%20=%20%5Cfrac%7B2%7D%7Ba%7D%5Cint%20_%7B0%7D%5E%7Ba%7D%20%5Csin%20%5CBiggl(%5Cfrac%7Bn%20%5Cpi%20x%7D%7Ba%7D%5CBiggr)V(x)%5Csin%5CBiggl(%5Cfrac%7Bn%20%5Cpi%20x%7D%7Ba%7D%5CBiggr)%20%7B%5Crm%20d%7Dx%20"></p>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/Double_Well_Potential/index.html</guid>
+  <pubDate>Mon, 14 Nov 2022 00:00:00 GMT</pubDate>
+  <media:content url="https://s2.loli.net/2022/11/19/rl5LkVhZoaNSO8g.png" medium="image" type="image/png"/>
+</item>
+<item>
+  <title>网站迁移记录</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/BlogMigrate/BlogMigrate.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="网站迁移记录" class="level1">
+<h1>网站迁移记录</h1>
+<p>由于之前技术力过于低下, 导致之前网站很多地方设置冲突且难以修复, 并且博客加载速度堪忧. 因此干脆直接服务器重装, 然后进行网站迁移. 为了方便日后查询, 记录一下迁移过程.</p>
+<section id="系统和环境配置" class="level2">
+<h2 class="anchored" data-anchor-id="系统和环境配置">系统和环境配置</h2>
+<p>之前的LAMP环境我用的是宝塔一键配置的, 但是宝塔面板这个东西用久了在我的破烂机器上总是容易有一些奇怪的问题. 因此这次重装我就直接 放弃了宝塔面板, 自己手动安装.<br>
+系统选用的是<strong>Ubuntu 18.04.1 LTS</strong>, 问就是够用就行(话说真的会有人在服务器上装Arch吗).<br>
+网站服务这边我直接放弃了PHP和MYSQL, 第一是没有数据库和动态页面的硬需求, 第二是自己对这两个都不熟悉, 因此只装个Nginx提供网页服务.</p>
+</section>
+<section id="ssl及域名配置" class="level2">
+<h2 class="anchored" data-anchor-id="ssl及域名配置">SSL及域名配置</h2>
+<section id="域名和nginx配置" class="level3">
+<h3 class="anchored" data-anchor-id="域名和nginx配置">域名和Nginx配置</h3>
+<p>这次直接放弃对站点作CDN, 只在图片服务上用了CDN(<code>image.yqwu.site</code>).<br>
+目前使用了四个域名:</p>
+<ul>
+<li><code>yqwu.site</code>, 主站点, 用于挂一些时效性比较久/需要直接写<code>html</code>来实现一些特殊功能的(事实上没有).</li>
+<li><code>image.yqwu.site</code>, 图床, 由七牛云提供服务.</li>
+<li><code>git.yqwu.site</code>, 个人的Git仓库, 基于gogs.</li>
+<li><code>blog.yqwu.site</code>, 博客站点, 实际上只是映射到了<code>yqwu.site</code>下的<code>blog</code>目录中.</li>
+</ul>
+<p>记录一下<code>blog.yqwu.site</code>的<code>Nginx</code>配置:</p>
+<pre><code># /etc/nginx/sites-available/blog.conf
+server {
+  listen 443 ssl;
+  server_name blog.yqwu.site;
+  root /var/www/html/blog;
+  index index.html index.htm;
+  location / {
+    try_files $uri $uri/ =404;
+  }
+}</code></pre>
+<p>以及<code>git.yqwu.site</code>的端口转发:</p>
+<pre><code># /etc/nginx/sites-available/git.conf
+server {
+  listen 443 ssl;
+  server_name git.yqwu.site;
+
+  location / {
+    proxy_pass https://yqwu.site:3000;
+  }
+}</code></pre>
+<p><code>gogs</code>不需要什么额外的配置, 只需要正确的指定证书文件就可以了.</p>
+</section>
+<section id="ssl证书" class="level3">
+<h3 class="anchored" data-anchor-id="ssl证书">SSL证书</h3>
+<p>同时, 对于SSL这个上次最重要的问题, 这次我是用<a href="https://certbot.eff.org/">certbot</a>申请的<a href="https://letsencrypt.org/">let’s encrypt</a> 的证书, 吸取上次的经验, 这次申请一个主域名<code>yqwu.site</code>和一个泛域名<code>*.yqwu.site</code>的证书. 唯一的缺点就是<code>certbot</code>不支持泛域名的自动 续签. 不过泛域名的优点远大于每三个月自己手动续签一次的麻烦了.</p>
+<blockquote class="blockquote">
+<p>谈一下为什么这次要申请泛域名. 一个就是方便管理, 避免后面再需要使用其他子域名的时候申请新的证书. 另外就是国内的几个CDN厂商 (点名七牛云,百度和阿里)都不支持<code>Let's encrypt</code>的证书(不是不支持加密, 是不支持转发来实习自动续签). 因此自动续签总是出问题. 所以不如直接用泛域名.</p>
+</blockquote>
+</section>
+</section>
+<section id="网页编辑与发布" class="level2">
+<h2 class="anchored" data-anchor-id="网页编辑与发布">网页编辑与发布</h2>
+<section id="网页创作和生成" class="level3">
+<h3 class="anchored" data-anchor-id="网页创作和生成">网页创作和生成</h3>
+<p>这次没用啥博客框架了(我总是弄的加载很慢), 直接Markdown编写加<a href="https://www.pandoc.org/">Pandoc</a>转成HTML, 配个CSS和KaTeX, 基本的功能 是没啥问题, 还蛮方便(hexo的Markdown规范太严格了, 很多用法都不支持).<br>
+然后手撸了一个根据Blog文件夹下的Markdown文件生成博客主页的脚本, 用起来还行(虽然啥功能也没有, 但能插二刺螈图就够了).</p>
+</section>
+<section id="编辑与发布" class="level3">
+<h3 class="anchored" data-anchor-id="编辑与发布">编辑与发布</h3>
+<p>直接用<code>sshfs</code>把服务器目录挂载下来, 然后编辑和生成都在本地做就好了, 省的之前用<code>hexo</code>的时候本地生成了还要SCP传上去(不过也是因为我这个 脚本没啥大的文件IO, <code>hexo</code>那种复杂的框架在<code>sshfs</code>上跑估计不太行).</p>
+</section>
+<section id="版本管理" class="level3">
+<h3 class="anchored" data-anchor-id="版本管理">版本管理</h3>
+<p>Git, 脚本和源文件都放在一个<a href="https://github.com/yqwu905/PersonalSite">仓库</a>里. 设置忽略所有生成的<code>html</code>文件就行了.</p>
+</section>
+</section>
+<section id="something-else" class="level2">
+<h2 class="anchored" data-anchor-id="something-else">Something Else</h2>
+<ul>
+<li>这次给网站加了个License(虽然感觉没啥用):<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-SA</a>.</li>
+<li>暂时是不准备给这个简陋的博客”系统”加什么功能了, 反正能用就行, 可以美其名曰加载快速.</li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/BlogMigrate/BlogMigrate.html</guid>
+  <pubDate>Wed, 09 Mar 2022 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz23.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>毕业论文写作有感</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/LatexThesisTips/LatexThesisTips.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="毕业论文写作有感" class="level1">
+<h1>毕业论文写作有感</h1>
+<p>最近用在写毕业论文, 之前没有使用LaTeX编写过这类<strong>较长的中文文档</strong>, 遇到了一些问题, 因此做个总结和记录, 也包含一些之前遇到的问题, 一并记录在此(好像该改名叫LaTeX Tips的说).</p>
+<section id="格式设置与内容撰写" class="level2">
+<h2 class="anchored" data-anchor-id="格式设置与内容撰写">格式设置与内容撰写</h2>
+<ul>
+<li><p>所有的设置和自定义命令都应该较好的排序和分类(所谓的Preamble, 导言区), 并在可能的情况下组织进一个单独的<code>.cls</code>或<code>.sty</code> 文件中.<br>
+</p></li>
+<li><p>对于毕业论文这一类较长的文件来说, 请利用<code>\input</code>和<code>\include</code>命令, 将内容拆分到多个文件内, 并合理的组织这些文件的路径. 例如, 在根目录下建立一个<code>pages</code>文件夹存放子文件, <code>pages</code>文件夹内按照章节建立<code>chapter</code>文件夹, 然后每个<code>section</code>对应一个 独立文件.<br>
+P.S. 关于<code>\input</code>和<code>\include</code>的差别, 可以参见<a href="https://tex.stackexchange.com/questions/246/when-should-i-use-input-vs-include">StackOverflow上的回答</a>.<br>
+</p></li>
+<li><p><strong>中文排版请使用<code>ctex</code>, 请不要再使用<code>CJK</code>系列宏包!</strong></p></li>
+<li><p>请注意备份与版本管理, 我推荐使用<code>git</code>.</p></li>
+<li><p>推荐你使用<code>latexmk</code>进行编译. 使用<code>latexmk</code>时, 一个很好的习惯是设置输出路径, 例如:</p>
+<pre><code>#~/.latexmkrc
+$out_dir = '.latexmk_build';</code></pre>
+<p>这样你可以获得一个干净的工作目录. 也更方便设置<code>.gitignore</code>.</p></li>
+<li><p>一点算是私活的内容, 相比于<code>MikTeX</code>, 我更推荐<code>Texlive</code>, 因为它更主流, 包也更全(Texlive 2022刚出, 感兴趣的可以试一试).</p></li>
+<li><p>不算是Tips, 只是提一嘴, 其实LaTeX编译很大一部分时间浪费在磁盘IO上, 因此装在SSD上一般可以提升编译速度; 另一点, 据说<code>Texlive</code>和<code>MikTex</code>在Windows上的实现都包裹了一层兼容层, 因此Windows上LaTeX编译的速度要比Linux上慢很多.</p></li>
+</ul>
+</section>
+<section id="数学公式" class="level2">
+<h2 class="anchored" data-anchor-id="数学公式">数学公式</h2>
+<ul>
+<li><p>请正确的使用各种符号, 包括但不限于:</p>
+<ul>
+<li>微分符号请不要直接打一个d上去, 正确的微分符号是正体, 并且带有半宽的空格, 请使用<code>physics</code>宏包, 其中提供了一系列规范且方便的命令, 可见下图: <img src="https://yqwu.site/posts/LatexThesisTips/https:/yqwu.site/img/lLM3t.png" class="img-fluid" alt="physics 宏包中提供的一部分指令"></li>
+<li>说到正体, 也请注意其他的符号(<code>sin</code>, <code>cos</code>, <code>ln</code>等), 往往也是正体, 对于它们, 大部分都有提供指令直接输出正确的格式(<code>\sin</code>, <code>\cos</code>, <code>\ln</code>). 对于没提供, 以 及需要在公式中输入正体字符的时候, 请使用<code>\mathrm</code>, 不要用<code>\text</code>.</li>
+<li>请正确的区分和选择各类花体字符:
+<ul>
+<li><code>\mathbb</code>, <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BRQCZV%7D">.</li>
+<li><code>\mathcal</code>, <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BRQCZV%7D">.</li>
+<li><code>\mathfrak</code>, <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BRQCZV%7D">.</li>
+<li><code>\mathsf</code>, <img src="https://latex.codecogs.com/png.latex?%5Cmathsf%7BRQCZV%7D">.</li>
+</ul></li>
+<li>单位输入请使用<code>siunitx</code>宏包.</li>
+</ul></li>
+<li><p>使用<code>\[\]</code>来创建Display Math环境, 而不是<code>$$$$</code>.</p></li>
+<li><p>请尽量使用<code>equation</code>环境, 再嵌套一个<code>aligned</code>环境可以应付99%的公式.</p></li>
+<li><p><code>equation</code>的一个优势是公式自动编号, 对于不需要编号的公式请使用<code>equation*</code>环境, 章节编号可以通过<code>\numberwithin</code>命令设定.</p></li>
+<li><p>还是公式编号, 引用公式请先在<code>equation</code>环境中插入<code>\label{eq:xxx}</code>, 引用时使用<code>\ref{eq:xxx}</code>, 这样可以实现编号变更后自动同步, 并且会在PDF文件中 生成可以点击跳转的链接.</p></li>
+<li><p>公式中, 使用括号等符号时(特别是公式中还有分式时)请尽量使用<code>\left \right</code>组合, 下面展示了直接输入括号和使用<code>\left\right</code>的差别:</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode latex code-with-copy"><code class="sourceCode latex"><span id="cb2-1">(<span class="fu" style="color: #4758AB;">\frac</span>{<span class="fu" style="color: #4758AB;">\lambda</span> <span class="fu" style="color: #4758AB;">\psi</span>(x, <span class="fu" style="color: #4758AB;">\lambda</span>)}{<span class="fu" style="color: #4758AB;">\psi</span>_1}(x, <span class="fu" style="color: #4758AB;">\lambda</span>)) = <span class="fu" style="color: #4758AB;">\left</span>(<span class="fu" style="color: #4758AB;">\frac</span>{<span class="fu" style="color: #4758AB;">\lambda</span> <span class="fu" style="color: #4758AB;">\psi</span>(x, <span class="fu" style="color: #4758AB;">\lambda</span>)}{<span class="fu" style="color: #4758AB;">\psi</span>_1(x, <span class="fu" style="color: #4758AB;">\lambda</span>)}<span class="fu" style="color: #4758AB;">\right</span>)</span></code></pre></div>
+<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Cfrac%7B%5Clambda%20%5Cpsi(x,%20%5Clambda)%7D%7B%5Cpsi_1%7D(x,%20%5Clambda))%20=%20%5Cleft(%5Cfrac%7B%5Clambda%20%5Cpsi(x,%20%5Clambda)%7D%7B%5Cpsi_1(x,%20%5Clambda)%7D%5Cright)%0A"></p></li>
+</ul>
+</section>
+<section id="其他技巧" class="level2">
+<h2 class="anchored" data-anchor-id="其他技巧">其他技巧</h2>
+<ul>
+<li><p>LaTeX中, <code>{}</code>可以起到和C语言中类似的作用. 例如, <code>\centering</code>, <code>\bf</code>等的作用域只会影响<code>{}</code>内的内容.</p></li>
+<li><p>接上条, 也请注意不要滥用<code>{}</code>, <code>{\centering }</code>输入更方便, 但是合理换行并缩进的:</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode latex code-with-copy"><code class="sourceCode latex"><span id="cb3-1"><span class="kw" style="color: #003B4F;">\begin</span>{<span class="ex" style="color: null;">center</span>}</span>
+<span id="cb3-2">  ...</span>
+<span id="cb3-3"><span class="kw" style="color: #003B4F;">\end</span>{<span class="ex" style="color: null;">center</span>}</span></code></pre></div>
+<p>具有更高的可读性.</p></li>
+<li><p>LaTeX是一个历史悠久并且使用广泛的语言, 这意味着你几乎99.99%的需求都可以通过前人开发的便捷且规范的宏包来解决. 因此在造轮子之前, 请搜索一下有没有相应的宏包, 或者其他人的解决方案.</p></li>
+<li><p><a href="https://tex.stackexchange.com/">StackExchange</a>可以解决你99.99%的问题.</p></li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/LatexThesisTips/LatexThesisTips.html</guid>
+  <pubDate>Fri, 04 Mar 2022 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz25.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Mathematica包开发(一)</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/Mathematica包开发/Mathematica包开发.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="mathematica包开发一" class="level1">
+<h1>Mathematica包开发(一)</h1>
+<p>最近需要写一个Mathematica的Package, 但网上教程并不多, <a href="https://reference.wolfram.com/language/tutorial/ModularityAndTheNamingOfThings.html.zh?source=footer">官方文档</a>冗长而又充斥着机翻, 因此做个笔记备忘.<br>
+本篇将主要介绍一下常用于创建包的函数, Paclet和文档等内容将放在下一篇.</p>
+<section id="局域变量module和with" class="level2">
+<h2 class="anchored" data-anchor-id="局域变量module和with">局域变量:<code>Module</code>和<code>With</code></h2>
+<p>Wolfram语言中提供了一些方式来创建局部变量. 最常用的是<code>Module</code>和<code>With</code>.</p>
+<ul>
+<li><code>Module</code>的定义:
+<ul>
+<li><code>Module[{x, y, ...}, expr]</code>.</li>
+<li><code>Module[{x=x0, ...}, expr]</code>.</li>
+<li><code>Module</code>会将<code>x,y,...</code>作为module内的局域变量处理, 并override module外的变量.</li>
+<li>如果<code>Module</code>对局域变量赋有初值, 那么该局域变量会在module执行前被赋值. 常见 的作用为将一个同名全局变量的值赋给局域变量.</li>
+<li>Examples
+<ul>
+<li><p>局域变量</p>
+<pre class="wolfram"><code>In[1]:= x = 10;
+Out[1]:= 10
+In[2]:= Module[{x},
+          x = 9;
+          x
+        ]
+Out[2]:= 9
+In[3]:= x
+Out[3]:= 10</code></pre></li>
+<li><p>局域函数</p>
+<pre class="wolfram"><code>In[1]:= fib[n_] :=
+          Module[{f},
+           f[1] = f[2] = 1;
+           f[i_] := f[i] = f[i - 1] + f[i - 2];
+           f[n]
+          ]
+In[2]:= fib[10]
+Out[2]:= 55
+In[3]:= f
+Out[3]:= f</code></pre></li>
+<li><p>赋有初始值的module</p>
+<pre class="wolfram"><code>gcd[m0_, n0_] :=
+  Module[{m = m0, n = n0},
+   While[n != 0, {m, n} = {n, Mod[m, n]}];
+   m
+  ]</code></pre></li>
+</ul></li>
+</ul></li>
+<li><code>With</code>的定义
+<ul>
+<li><code>With[{x=x0,y=y0, ... },expr]</code></li>
+<li>和<code>Module</code>不同, <code>With</code>必须给定局域变量的初始值, 同时, <code>With</code>会在执行前将所有局域 变量替换成给定的初始值, 这意味着<code>With</code>创建的是<strong>局域常数</strong></li>
+<li>Examples
+<ul>
+<li><p>尝试修改<code>With</code>声明的常量值:</p>
+<pre class="wolfram"><code>In[1]:= With[{x = 10},
+          x = x + 1;
+        ]
+Out[1]:= Set::setraw: Cannot assign to raw object 10.</code></pre>
+<p>可以看出<code>With</code>的效果类似于c中的<code>#define</code>, 在执行前直接被替换为给定值.</p></li>
+<li><p><code>With</code>的执行效率高于<code>Module</code>:</p>
+<pre class="wolfram"><code>In[1]:= Timing[Do[Module[{x = 5}, x;], {10^5}]]
+Out[1]:= {0.109375, Null}
+In[2]:= Timing[Do[With[{x = 5}, x;], {10^5}]]
+Out[2]:= {0.046875, Null}</code></pre></li>
+<li><p>注意,<code>With</code>中执行的是<strong>替换</strong>, 因此可以代入<code>Hold</code>的表达式:</p>
+<pre class="wolfram"><code>In[1]:= With[{x=y}, Hold[x]]
+Out[1]:= Hold[y]
+In[2]:= With[{x=y}, Hold[x]]
+Out[2]:= Hold[x$138]</code></pre>
+<p>其中,<code>x$138</code>的形式是<code>Module</code>用了代表内部每一个局部变量的,形式均为<code>x$nnn</code>, <code>nnn</code>为<code>Module</code>中任何形式使用变量的总次数, 记录于全局变量<code>$ModuleNumber</code> 中.</p></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="全局变量的局域值block" class="level2">
+<h2 class="anchored" data-anchor-id="全局变量的局域值block">全局变量的局域值:<code>Block</code></h2>
+<p><code>Block</code>可以为一个全局变量创建一个局域值:</p>
+<pre class="wolfram"><code>In[1]:= x = 10
+Out[1]:= 10
+In[2]:= Block[{x=1},x]
+Out[2]:= 1
+In[3]:= x
+Out[3]:= 10</code></pre>
+<p>可以看出<code>Block</code>在不改变全局变量已有赋值的情况下, 为全局变量创建了一个局域值.<br>
+<code>Module</code>和<code>Block</code>的区别主要在于:<strong><code>Module</code>是声明一个局域变量, 而<code>Block</code>是全局变量的 一个局域值</strong>:</p>
+<pre class="wolfram"><code>In[1]:= m = i^2
+Out[1]:= i^2
+In[2]:= Block[{i = a}, i + m]
+Out[2]:= a + a^2
+In[3]:= Module[{i = a}, i + m]
+Out[3]:= a + i^2</code></pre>
+<p>从上面这个例子中你应当可以看出区别所在.</p>
+</section>
+<section id="命名空间context" class="level2">
+<h2 class="anchored" data-anchor-id="命名空间context">命名空间:<code>Context</code></h2>
+<p>为了避免不同程序包中的符号命名冲突, Wolfram语言中引入了类似于C++的namespace的 概念, 称为<strong>上下文</strong>:<code>Context</code>.<br>
+Wolfram语言中,任何变量名实际上都由两部分组成:上下文和变量名:</p>
+<pre><code>context`name</code></pre>
+<p>任何上下文都以`结尾, 当你启动一个Wofram进程时, 默认的上下文为<code>Global'</code>,可以通 过<code>Context[]</code>或者<code>$Context</code>变量来查看当前的默认上下文.<br>
+另外, Wolfram还可以加载一系列的模块, 他们可能包含不同的上下文, 为此, Wolfram语 言中引入了<code>$ContextPath</code>这一变量, 类似于系统的搜索路径, Wolfram会<strong>首先</strong>在 <code>$ContextPath</code>的上下文中搜索, 之后才会搜索当前的上下文.</p>
+<pre class="wolfram"><code>In[1]:= $Context
+Out[1]= Global`
+
+In[2]:= Context[]
+Out[2]= Global`
+
+In[3]:= $ContextPath
+Out[3]= {NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[4]:= a = 1
+Out[4]= 1
+
+In[5]:= Context[a]
+Out[5]= Global`
+
+In[6]:= System`b = 2
+Out[6]= 2
+
+In[7]:= Context[b]
+Out[7]= System`
+
+In[8]:= Global`b = 3
+Global`b::shdw: Symbol b appears in multiple contexts {Global`, System`}; definitions in context Global` may shadow or be shadowed by other definiti
+ons.
+Out[8]= 3
+
+In[9]:= b
+Out[9]= 2
+
+In[10]:= Global`b
+Out[10]= 3</code></pre>
+<p>可以使用<code>Begin</code>和<code>End</code>来创建和关闭一个新的上下文:</p>
+<pre class="wolfram"><code>In[1]:= Begin["newContext`"] (* 相当于 $Context="newContext`" *)
+Out[1]= newContext`
+
+In[2]:= var1 = 100;
+        Context[var1]
+Out[2]= newContext`
+
+In[3]:= Context[]
+Out[3]= newContext`
+
+In[4]:= End[]
+Out[4]= newContext`
+
+In[5]:= Context[]
+Out[5]= Global`</code></pre>
+<p>在新的上下文中创建的变量无法只通过变量名访问:</p>
+<pre class="wolfram"><code>In[1]:= var1
+Out[1]= Var1
+
+In[2]:= newContext`var1
+Out[2]= 100</code></pre>
+<p>将某一个上下文加入到<code>$ContextPath</code>中可以实现只是用变量名访问:</p>
+<pre class="wolfram"><code>In[1]:= PrependTo[$ContextPath, "newContext`"]
+Out[1]= {newContext`, NaturalLanguageProcessingLoader`, System`, Global`}
+
+In[2]:= var1
+Out[2]= 100</code></pre>
+</section>
+<section id="程序包package" class="level2">
+<h2 class="anchored" data-anchor-id="程序包package">程序包:<code>Package</code></h2>
+<p>可以使用<code>BeginPackage</code>和<code>EndPackage</code>函数来创建一个程序包:</p>
+<pre class="wolfram"><code>In[1]:= BeginPackage["newPackage`"]
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        EndPackage[]
+
+In[2]:= SumSquares[1, 2]
+Out[2]= 5
+
+In[3]:= $ContextPath
+Out[3]= {newPackage`, NaturalLanguageProcessingLoader`, System`, Global`}</code></pre>
+<p>可以看出, 创建Package会自动创建同名的上下文, 并自动添加到<code>$ContextPath</code>中.<br>
+同时, Wolfram语言中也可以声明私有成员, 例如, 上例中的<code>n</code>是可以修改的:</p>
+<pre class="wolfram"><code>In[1]:= n=3;
+        SumSquares[1, 2]
+Out[1]= 9</code></pre>
+<p>可以通过在Package中创建<code>Private</code>上下文来声明私有成员:</p>
+<pre class="wolfram"><code>In[1]:= BeginPackage["newPackage`"]
+        SumSquares::usage = "SumSquares[x, y] = x^2 + y^2"
+        Begin["`Private`"];
+        n=2;
+        SumSquares[x_, y_] := x^n + y^n;
+        End[]
+        EndPackage[]
+
+In[2]:= SumSquares[1,2];
+Out[2]= 5
+
+In[3]:= n=3;
+        SumSquares[1,2];
+Out[2]= 5</code></pre>
+<p>位于<code>Private</code>环境内的函数和变量无法被在Package外部访问, 因此我们手动在Package内 引用<code>SumSquares</code>函数, 使其能够被外部调用.</p>
+</section>
+<section id="something-else" class="level2">
+<h2 class="anchored" data-anchor-id="something-else">Something Else</h2>
+<ul>
+<li>本文中大部分的例子来源于相应函数的文档, 还有一部分来自于Wolfram的讲座, 你可以 从<a href="https://github.com/WolframChinaWL/WLProgramingTraining">这里</a>获取到演示笔记本, 本节的内容对应于Module 7.</li>
+<li>关于创建Paclet包, 单元测试, 创建文档等相关内容会放在下篇中讨论.</li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Computer Science</category>
+  <guid>https://yqwu.site/posts/Mathematica包开发/Mathematica包开发.html</guid>
+  <pubDate>Tue, 04 Jan 2022 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz15.png" medium="image" type="image/png"/>
+</item>
+<item>
+  <title>Car-Parrinello 分子动力学</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/Car_Parrinello_Molecule_Dynamics/Car_Parrinello_Molecule_Dynamics.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="car-parrinello-分子动力学" class="level1">
+<h1>Car-Parrinello 分子动力学</h1>
+<p>这篇文章主要基于Car-Parrinello 1985年的PRL文章<sup>[1]</sup>与Understanding Molecular Simulations一书<sup>[2]</sup>.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>简单来说, CPMD(Car-Parrinello molecular dynamics)是一种<em>ab initio</em> MD方法. 在DFT理论得到提出并应用后, 通过DFT计算出体系的势后, 再执行MD的算法. 这就是BOMD(Born-Oppenheimer MD)的思想. BOMD通过BO近似将原子核与电子解耦, 但相应的缺点就是我们需要进行计算耗时较长的SCF. 为提升AIMD的计算效率, Car和Parrinello在1985年发表了一篇文章, 提供了CPMD这一方法. CPMD不将原子核与电子的运动解耦, 而是为电子引入一个虚质量, 并直接进行简单经典MD算法.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<section id="基本思路" class="level3">
+<h3 class="anchored" data-anchor-id="基本思路">基本思路</h3>
+<p>对于一个给定的体系, 其Hamiltonian由KS泛函给出:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20H_%7BKS%7D(%7B%5Cbf%20r%7D)%20=%20-%5Cfrac%7B1%7D%7B2%7D%20%5Cnabla%5E2%20+%20V_%7Bext%7D(%7B%5Cbf%20r%7D)%20+%20V_%7BKS%7D%5Bn%5D(%7B%5Cbf%20r%7D)"></p>
+<p>其中<img src="https://latex.codecogs.com/png.latex?V_%7BKS%7D%5Bn%5D(%7B%5Cbf%20r%7D)"> 是电子密度的泛函. 常规的SCF做法是给定一个初始电子密度<img src="https://latex.codecogs.com/png.latex?n(%7B%5Cbf%20r%7D)">, 然后重复计算 <img src="https://latex.codecogs.com/png.latex?V_%7BKS%7D%5Bn%5D(%7B%5Cbf%20r%7D)">和<img src="https://latex.codecogs.com/png.latex?n(%7B%5Cbf%20r%7D)"> 直到自洽. 但是我们可以通过Rayleigh-Ritz方法来直接 对泛函进行最小化, 求得电子基态.<br>
+一旦我们给定了体系电子波函数的一组基 <img src="https://latex.codecogs.com/png.latex?%5C%7Bb_%7Bk%7D(%7B%5Cbf%20r%7D)%5C%7D"> , 体系的波函数可以写为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cpsi_%7Bi%7D(%7B%5Cbf%20r%7D)%20=%20%5Csum%5E%7BN_%7Bb%7D%7D_%7Bk=1%7Dc_%7Bik%7Db_%7Bk%7D(%7B%5Cbf%20r%7D),%5C;i=1,%5Ccdots,N_%7Be%7D"></p>
+<p>则<img src="https://latex.codecogs.com/png.latex?H_%7BKS%7D"> 现在就是系数<img src="https://latex.codecogs.com/png.latex?%5C%7Bc_%7Bik%7D%5C%7D"> 的一个多元函数. 求解电子基态的任务变为求使$E({c_{ik}} $ 最小的<img src="https://latex.codecogs.com/png.latex?%5C%7Bc_%7Bik%7D%5C%7D">.<br>
+同时为了保证正交性, 我们需要带有约束:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cint%20%5Cpsi_%7Bi%7D%5E%7B*%7D(%7B%5Cbf%20r%7D)%20%5Cpsi_%7Bj%7D(%7B%5Cbf%20r%7D)%20=%20%5Cdelta_%7Bij%7D"></p>
+<p>即:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Csum_%7Bk,k'=1%7D%5E%7BN_%7Bb%7D%7Dc%5E%7B*%7D_%7Bik%7D%20c_%7Bjk'%7D%20%5Cleft(%5Cint%20b_%7Bk%7D%5E%7B*%7D(%7B%5Cbf%20r%7D)%20b_%7Bk'%7D(%7B%5Cbf%20r%7D)%5Cright)%20-%20%5Cdelta_%7Bij%7D%20=%200%20"></p>
+<p>但很明显, 我们面对的是一个<img src="https://latex.codecogs.com/png.latex?N_%7Bb%7D%5Ctimes%20N_%7Be%7D">维的函数优化问题, 计算量非常巨大.<br>
+幸运的是, 在两年前, Kirkpatrick, Delatt和Vecchi提出了著名的<strong>模拟退火</strong>算法<sup>[3]</sup>, 使得我们有希望快速的 求解这类优化问题. 同时, Car和Parrinello意识到, 模拟退火算法的<em>动力学</em>是Metropolis算法, 这一算法 在相空间中搜索最小值非常高校, 但问题在于我们得到的轨迹没有物理意义. Car和Parrinello构建了如下的 Lagrangian, 通过牛顿力学对参数进行优化:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cmathcal%7BL%7D%20=%20%20%5Cunderbrace%7B%5Csum_%7Bi%7D%5Cfrac%7B1%7D%7B2%7D%5Cmu%20%5Cint%20%7C%5Cdot%7B%5Cpsi%7D_%7Bi%7D(%7B%5Cbf%20r%7D)%7C%5E2%20%7B%5Crm%20d%7D%7B%5Cbf%20r%7D%7D_%7B%5Ctext%7BDamping%7D%7D%20-%20E%5B%5C%7B%5Cpsi_%7Bi%7D%5C%7D%5D%20+%20%5Cunderbrace%7B%5Csum_%7Bij%7D%5CLambda_%7Bij%7D%5Cleft%5B%5Cint%20%5Cpsi_%7Bi%7D%5E%7B*%7D(%7B%5Cbf%20r%7D)%5Cpsi_%7Bj%7D(%7B%5Cbf%20r%7D)-%5Cdelta_%7Bij%7D%5Cright%5D%7D_%7B%5Ctext%7BLagranian%20multipliers%7D%7D"></p>
+<p>可以看出, Car和Parrinello增加了两项:</p>
+<ul>
+<li>第一项阻尼项, 其中<img src="https://latex.codecogs.com/png.latex?%5Cmu">为电子的虚拟质量.</li>
+<li>第三项拉格朗日乘子项, 用于满足约束条件.</li>
+</ul>
+</section>
+<section id="cpmd" class="level3">
+<h3 class="anchored" data-anchor-id="cpmd">CPMD</h3>
+<p>我们将原子核的部分显式的写出:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%20%5Cbegin%7Baligned%7D%5Cmathcal%7BL%7D%20=%20&amp;%5Csum%20%5Cfrac%7B1%7D%7B2%7D%5Cmu%20%5Cint%7C%5Cdot%7B%5Cpsi%7D(%7B%5Cbf%20r%7D)%7C%5E%7B2%7D%20+%20%5Csum_%7BI%7D%5Cfrac%7B1%7D%7B2%7DM_%7BI%7D%5Cdot%7B%7B%5Cbf%20R%7D_%7BI%7D%7D%5E%7B2%7D+%5Csum_%7Bv%7D%5Cfrac%7B1%7D%7B2%7D%5Cmu_%7Bv%7D%5Cdot%7B%5Calpha%7D%5E%7B2%7D_%7Bv%7D%5C%5C%0A&amp;-E%5B%5C%7B%5Cpsi_%7Bi%7D%5C%7D,%5C%7B%7B%5Cbf%20R%7D_%7BI%7D%5C%7D,%20%5C%7B%5Calpha_%7Bv%7D%5C%7D%5D+%5Csum_%7Bij%7D%5CLambda_%7Bij%7D%5Cleft%5B%5Cint%20%5Cpsi_%7Bi%7D%5E%7B*%7D(%7B%5Cbf%20r%7D)%5Cpsi_%7Bj%7D(%7B%5Cbf%20r%7D)%20-%20%5Cdelta_%7Bij%7D%5Cright%5D%5Cend%7Baligned%7D%20"></p>
+<p>其中, <img src="https://latex.codecogs.com/png.latex?%7B%5Cbf%20R%7D_%7BI%7D">为原子核的坐标, <img src="https://latex.codecogs.com/png.latex?M_%7BI%7D">为原子核质量, <img src="https://latex.codecogs.com/png.latex?%5Calpha_%7Bv%7D"> 为影响体系能量的外参量, 例如压强, 体积等. 我们也相应的为<img src="https://latex.codecogs.com/png.latex?%5Calpha_%7Bv%7D">添加了阻尼项, 带有虚质量<img src="https://latex.codecogs.com/png.latex?%5Cmu_%7Bv%7D">.<br>
+从上式中, 我们可以得到几个参数在相空间中的运动方程:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cleft%5C%7B%5Cbegin%7Baligned%7D%0A&amp;%5Cmu%20%5Cddot%7B%5Cpsi%7D_%7Bi%7D%20=%20-%5Cfrac%7B%5Cdelta%20E%7D%7B%5Cdelta%20%5Cpsi_%7Bi%7D%5E%7B*%7D%7D%20+%20%5Csum_%7Bk%7D%5CLambda_%7Bik%7D%5Cpsi_%7Bk%7D%5C%5C%0A&amp;M_%7BI%7D%5Cddot%7B%7B%5Cbf%20R%7D%7D_%7BI%7D%20=%20-%20%5Cnabla_%7B%7B%5Cbf%20R%7D_%7BI%7D%7DE%5C%5C%0A&amp;%5Cmu_%7Bv%7D%5Cddot%7B%5Calpha%7D_%7Bv%7D%20=%20-%5Cfrac%7B%5Cpartial%20E%7D%7B%5Cpartial%20%5Calpha_%7Bv%7D%7D%0A%5Cend%7Baligned%7D%5Cright."></p>
+<p>上式即为CPMD的核心运动方程. 对于<img src="https://latex.codecogs.com/png.latex?%5Cpsi_%7Bi%7D">, 我们更进一步将其展开为<img src="https://latex.codecogs.com/png.latex?%7B%5Cbf%20c%7D_%7Bi%7D%20=%20(c_%7Bi1%7D,%20%5Ccdots,%20c_%7BiN_%7Bb%7D%7D)">的方程:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cmu%20%5Cddot%7B%7B%5Cbf%20c%7D%7D_%7Bi%7D%20=%20-%5Cleft(H%20%7B%5Cbf%20c%7D_%7Bi%7D%20-%20%5Csum_%7Bk%7D%5Clambda_%7Bik%7D%7B%5Cbf%20c%7D_%7Bk%7D%5Cright)"></p>
+<p>之后, 就可以通过经典的MD算法计算.</p>
+</section>
+</section>
+<section id="discussions" class="level2">
+<h2 class="anchored" data-anchor-id="discussions">Discussions</h2>
+<section id="与bomd对比" class="level3">
+<h3 class="anchored" data-anchor-id="与bomd对比">与BOMD对比</h3>
+<p>CPMD的优势是一目了然的: 我们不需要每一步都完整求解一次DFT. 我们只需要在最开始的时候进行一次DFT计算, 求得<img src="https://latex.codecogs.com/png.latex?%5C%7Bc_%7Bik%7D%5C%7D">的初始值即可.<br>
+而缺点相应的也有:</p>
+<ul>
+<li>模型中多了一个超参数<img src="https://latex.codecogs.com/png.latex?%5Cmu">.</li>
+<li>稳定收敛的时间步长比BOMD要小(解释见后).</li>
+<li>精确度低于BOMD.</li>
+</ul>
+</section>
+<section id="虚质量" class="level3">
+<h3 class="anchored" data-anchor-id="虚质量">虚质量</h3>
+<p>CPMD的关键就是虚质量的引入, 一个很自然的问题就是, 虚质量该如何选取? 它会如何影响计算的结果? 答案是, 理论上虚质量越小计算越精确. 在CPMD中, 随着体系原子核的运动, 我们不重新计算电子波函数, 而是 基于运动方程进行更新, 这一做法的正确性是由绝热定理保证的. 而当虚质量较大时, 体系中会存在较大的从原子核 到电子的动能转移, 从而破坏绝热条件, 导致计算出现误差.<br>
+另一方面, 较小的电子虚质量, 要求MD算法采用更小的时间步, 来保证计算收敛.<br>
+一般来说, 电子虚质量的取值为<img src="https://latex.codecogs.com/png.latex?400%20%5Csim%20800%20%5C;%7B%5Crm%20a.u.%7D">.<br>
+另外, 已被证明, 当<img src="https://latex.codecogs.com/png.latex?%5Cmu%5Cto%200">的极限下, CPMD收敛于BOMD.</p>
+</section>
+<section id="拉格朗日乘子的确定" class="level3">
+<h3 class="anchored" data-anchor-id="拉格朗日乘子的确定">拉格朗日乘子的确定</h3>
+<p>在CPMD中, 拉格朗日乘子也随着时间演化, 通过SHAKE算法进行更新, 如果你感兴趣, 可以查阅参考资料.<sup>[4]</sup></p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<ul>
+<li><span id="1">[1] Phys. Rev.&nbsp;Lett., 55 (1985)</span><br>
+</li>
+<li><span id="2">[2] Daan Frenkel, Berend Smit, Understanding Molecular Simulations, Academic Press (2002)</span></li>
+<li><span id="3">[3] Science, 22, 671-680.</span></li>
+<li><span id="4">[4] arXiv:cond-mat/0610552.</span></li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Physics</category>
+  <guid>https://yqwu.site/posts/Car_Parrinello_Molecule_Dynamics/Car_Parrinello_Molecule_Dynamics.html</guid>
+  <pubDate>Fri, 29 Oct 2021 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz24.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>黑体辐射</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/黑体辐射/黑体辐射.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="黑体辐射" class="level1">
+<h1>黑体辐射</h1>
+<section id="bose的推导" class="level2">
+<h2 class="anchored" data-anchor-id="bose的推导">Bose的推导</h2>
+<p>我们首先需要讨论一下黑体辐射体系的特征. 黑体辐射问题实际上讨论的是, 处于热平衡状态下的光子气体的分布. 有以下特征:</p>
+<ul>
+<li>光子是交换对称的, 即遵循<strong>玻色分布</strong>.</li>
+<li>在不考虑QED的情况下, 光子与光子间不存在相互作用, 即光子气体是<strong>理想气体</strong>.</li>
+<li>由于光子可以被吸收和发射, 因此体系的粒子数<img src="https://latex.codecogs.com/png.latex?N"> 是一个变量, 由热平衡条件决定, 即:要求</li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cfrac%7B%5Cpartial%20F%7D%7B%5Cpartial%20N%7D%20=%200%20"></p>
+<p>同时由定义可知:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cleft(%5Cfrac%7B%5Cpartial%20F%7D%7B%5Cpartial%20N%7D%5Cright)_%7BT,V%7D%20=%20%5Cmu%20"></p>
+<p>即光子气体<strong>化学势为0</strong>.</p>
+<p>那么我们可以立刻写出对于光子气, 所谓的Planck分布:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Coverline%7Bn%7D_%7Bk%7D%20=%20%5Cfrac%7B1%7D%7Be%5E%7B%5Chbar%20%5Comega/T%7D-1%7D%20%5Ctag%7B1%7D"></p>
+<p>我们继续研究频率在<img src="https://latex.codecogs.com/png.latex?%5Comega%5Csim%20%5Comega+%7B%5Crm%20d%7D%20%5Comega"> 间的量子态数:<br>
+在波矢 <img src="https://latex.codecogs.com/png.latex?k"> 空间中, 半径为<img src="https://latex.codecogs.com/png.latex?k%5Csim%20k+%7B%5Crm%20d%7Dk"> 的球壳内的本征振动数为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cfrac%7BV%7D%7B(2%20%5Cpi)%5E%7B3%7D%7D4%20%5Cpi%20k%5E%7B2%7D%7B%5Crm%20d%7Dk%20"></p>
+<p>注意到每个振动模式都相应的有两个偏振态, 因此上式需要乘2, 并代入<img src="https://latex.codecogs.com/png.latex?%5Comega=ck">, 我们得到<img src="https://latex.codecogs.com/png.latex?%5Comega%5Csim%20%5Comega+%7B%5Crm%20d%7D%20%5Comega"> 间的量子态数:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cfrac%7BV%20%5Comega%5E%7B2%7D%20%7B%5Crm%20d%7D%20%5Comega%7D%7B%5Cpi%5E%7B2%7Dc%5E%7B3%7D%7D%20%5Ctag%7B2%7D"></p>
+<p>将量子态数式<img src="https://latex.codecogs.com/png.latex?(2)">乘以对应的占据数式<img src="https://latex.codecogs.com/png.latex?(1)">, 我们就得到了<img src="https://latex.codecogs.com/png.latex?%5Comega%5Csim%20%5Comega+%7B%5Crm%20d%7D%20%5Comega"> 间的光子数:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7B%5Crm%20d%7DN_%7B%5Comega%7D%20=%20%5Cfrac%7BV%7D%7B%5Cpi%5E%7B2%7Dc%5E%7B3%7D%7D%20%5Cfrac%7B%5Comega%5E%7B2%7D%7B%5Crm%20d%7D%5Comega%7D%7Be%5E%7B%5Chbar%20%5Comega/T%7D-1%7D%20%5Ctag%7B3%7D"></p>
+<p>相应的能量为式<img src="https://latex.codecogs.com/png.latex?(3)">乘 <img src="https://latex.codecogs.com/png.latex?%5Chbar%20%5Comega">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7B%5Crm%20d%7DE_%7B%5Comega%7D%20=%20%5Cfrac%7BV%5Chbar%7D%7B%5Cpi%5E%7B2%7Dc%5E%7B3%7D%7D%5Cfrac%7B%5Comega%5E%7B3%7D%7B%5Crm%20d%7D%20%5Comega%7D%7Be%5E%7B%5Chbar%20%5Comega/T%7D-1%7D%20"></p>
+</section>
+<section id="planck的推导" class="level2">
+<h2 class="anchored" data-anchor-id="planck的推导">Planck的推导</h2>
+<p>Planck的出发点是如下的假设: &gt; 光子的能量一定为: &gt; <img src="https://latex.codecogs.com/png.latex?%20%5Cepsilon_%7B%5Comega%7D%20=%20n%5Chbar%5Comega,%5Cquad%20n%5Cin%5Cmathbb%7BN%7D%20"></p>
+<p>由此, 体系的配分函数为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20Z(%5Comega)%20=%20%5Csum_%7Bn=0%7D%5E%7B%5Cinfty%7De%5E%7B-n%20%5Cbeta%20%5Chbar%20%5Comega%7D%20%20=%20%5Cfrac%7B1%7D%7B1-e%5E%7B-%5Cbeta%20%5Chbar%20%5Comega%7D%7D%20%5Ctag%7B4%7D"></p>
+<p>相应的平均能量为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20E_%7B%5Comega%7D%20=%20-%5Cfrac%7B%7B%5Crm%20d%7D%7D%7B%7B%5Crm%20d%7D%20%5Cbeta%7D%20%5Cln%20Z%20=%20%5Cfrac%7B%5Chbar%20%5Comega%7D%7Be%5E%7B%5Cbeta%20%5Chbar%20%5Comega%7D-1%7D%20%5Ctag%7B5%7D%20"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Comega%5Csim%20%5Comega+%7B%5Crm%20d%7D%20%5Comega"> 间的量子态数应当得到相同的结果, 将式<img src="https://latex.codecogs.com/png.latex?(2)"> 与式<img src="https://latex.codecogs.com/png.latex?(5)"> 相乘, 我们得到能量分布:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7B%5Crm%20d%7D%20E_%7B%5Comega%7D%20=%20%5Cfrac%7BV%5Chbar%7D%7B%5Cpi%5E%7B2%7Dc%5E%7B3%7D%7D%5Cfrac%7B%5Comega%5E%7B3%7D%7B%5Crm%20d%7D%20%5Comega%7D%7Be%5E%7B%5Chbar%20%5Comega/T%7D%20-%201%7D"></p>
+</section>
+<section id="关于两种推导的讨论" class="level2">
+<h2 class="anchored" data-anchor-id="关于两种推导的讨论">关于两种推导的讨论</h2>
+<p>对于两者的推导, 频率区间内的量子态的数量是相同的, 不同之处在于, 对于Bose的推导, 我们是求得对于其中每个量子态的平均占有数, 再乘以单光子的能量<img src="https://latex.codecogs.com/png.latex?%5Chbar%20%5Comega">, 而对于Planck的推导, 则是求得在这个态上的平均能量, 直接乘以态密度 那么为什么这两者能得出相同的结论呢?<br>
+我的理解是, Planck的假设实际上包含了Bose统计的假设. 光子的能量为<img src="https://latex.codecogs.com/png.latex?n%20%5Chbar%20%5Comega"> 意味着什么? 我们都知道, 频率为<img src="https://latex.codecogs.com/png.latex?%5Comega"> 的光子能量为<img src="https://latex.codecogs.com/png.latex?%5Chbar%20%5Comega">, 因此这一假设实际上包含两重含义:</p>
+<ul>
+<li>频率为<img src="https://latex.codecogs.com/png.latex?%5Comega"> 的态上的光子数是任意(<img src="https://latex.codecogs.com/png.latex?n">)的.</li>
+<li>光子之间是不可分辨(否则不同的n会相应的有一个不同的组合系数).</li>
+</ul>
+<p>所以Planck的做法(式<img src="https://latex.codecogs.com/png.latex?(4)">)实际上是在对光子数进行求和, 相应的, 得到的平均占有数应当为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cfrac%7BE_%7B%5Comega%7D%7D%7B%5Chbar%20%5Comega%7D%20=%20%5Cfrac%7B1%7D%7Be%5E%7B%5Cbeta%20%5Chbar%20%5Comega%7D-1%7D%20"></p>
+<p>正与Bose统计导出的光子气平均占有数相同.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Physics</category>
+  <guid>https://yqwu.site/posts/黑体辐射/黑体辐射.html</guid>
+  <pubDate>Tue, 21 Sep 2021 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz28.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>自动微分(Automatic Differentiation)</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/AutomaticDifferentiation/AutomaticDifferentiation.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="自动微分automatic-differentiation" class="level1">
+<h1>自动微分(Automatic Differentiation)</h1>
+<section id="微分算法" class="level2">
+<h2 class="anchored" data-anchor-id="微分算法">微分算法</h2>
+<p>对于几乎所有最优化方法来说, 最基础的一步就是求任意函数的微分. 例如梯度下降法(Gradient Descent). 因此, 微分算法的重要性自然不言而喻. 目前, 一共存在四种微分算法: * 手动微分(Manual Differentiation), 即手动求出函数的微分, 并直接编码进代码里. * 数值微分(Numerical Differentiation). 顾名思义, 求解任意函数在某一点的微分的数值解. * 符号微分(Symbolic Differentiation). 即Mathematica中提供的微分, 给出任意函数微分的解析表达式. * 自动微分(Automatic Differentiation).</p>
+<p>其中手动微分由于每次修改模型, 我们都需要更改求解梯度的代码, 并且对于维度较高的函数编码量很大, 因此较少采用, 我们在此也不会涉及.</p>
+<section id="数值微分numerical-differentiation" class="level3">
+<h3 class="anchored" data-anchor-id="数值微分numerical-differentiation">数值微分(Numerical Differentiation)</h3>
+<p>数值微分是最简单的一种计算微分的方法, 原理就是基于微分的定义: <img src="https://latex.codecogs.com/png.latex?%20f'(x)%20=%20%5Clim_%7B%5Cepsilon%20%5Cto%200%7D%20%5Cfrac%7Bf(x+%5Cepsilon)%20-%20f(x)%7D%7B%5Cepsilon%7D"> 我们将<img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> 取一个极小值(例如<img src="https://latex.codecogs.com/png.latex?0.00001">), 代入计算即可得到数值微分. 较为常用的是中心差分法: <img src="https://latex.codecogs.com/png.latex?%20f'(x)%20=%20%5Clim_%7B%5Cepsilon%20%5Cto%200%7D%20%5Cfrac%7Bf(x+%5Cepsilon)%20-%20f(x-%5Cepsilon)%7D%7B2%20%5Cepsilon%7D%20"> 数值微分的优点是<strong>编码非常容易</strong>, 但缺点也很明显:<strong>第一, 计算量很大, 计算梯度时对于每个变量都需要计算两次函数值; 第二, 误差较大, 这一点在计算物理/数值方法课上应该都有过详细的讨论</strong>.</p>
+</section>
+<section id="符号微分symbolic-differentiation" class="level3">
+<h3 class="anchored" data-anchor-id="符号微分symbolic-differentiation">符号微分(Symbolic Differentiation)</h3>
+<p>符号微分即求得函数的微分的解析表达式. 其优点在于得到<strong>是精确解, 并且只需要求解一次表达式, 函数各点的微分都可以得到</strong>, 而缺点也很明显, <strong>第一, 随着函数表达式复杂度的上升, 得到的微分解析式复杂度可能极速膨胀, 即所谓的”表达式膨胀”(expression swell)问题; 第二, 符号微分只能求解具有数学表达式形式的函数, 但很多时候我们使用的函数并不具有一个显式的表达式形式; 第三, 符号微分难以求解存在不可微点的函数.</strong></p>
+</section>
+<section id="自动微分automatic-differentiation-1" class="level3">
+<h3 class="anchored" data-anchor-id="自动微分automatic-differentiation-1">自动微分(Automatic Differentiation)</h3>
+<p>终于到了今天的主角, 自动微分. 自动微分的想法其实可以看作手动微分和数值微分的结合: 由于绝大多数函数的微分都可以通过查表得到, 因此我们只需要实现对几个基本函数的手动微分, 之后利用链式法则, 每步都带入数值求解, 就能实现对于任意函数的精确微分了.<br>
+自动微分是目前综合性能最好的微分算法, 同时具有精确求解, 速度快, 可求解含有逻辑控制语句与部分不可微的函数等优点.</p>
+</section>
+</section>
+<section id="自动微分-forward-mode" class="level2">
+<h2 class="anchored" data-anchor-id="自动微分-forward-mode">自动微分-Forward Mode</h2>
+<p>我们从一个例子开始讲解前向的自动微分算法.<br>
+考虑函数: <img src="https://latex.codecogs.com/png.latex?%20f(x_1,%20x_2)%20=%20%5Cln%20(x_1)%20+%20x_1%20x_2%20-%5Csin(x_2)%20"> 可以将其转化为如下的AST形式 <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/i/2021-08-17-01-20-17.png" class="img-fluid" alt="2021-08-17-01-20-17"> 各节点分别为: * <img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> :<img src="https://latex.codecogs.com/png.latex?x_1"> * <img src="https://latex.codecogs.com/png.latex?v_0"> :<img src="https://latex.codecogs.com/png.latex?x_2"> * <img src="https://latex.codecogs.com/png.latex?v_1"> :<img src="https://latex.codecogs.com/png.latex?%5Cln%20v_%7B-1%7D"> * <img src="https://latex.codecogs.com/png.latex?v_2"> :<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D%5Ctimes%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_3"> :<img src="https://latex.codecogs.com/png.latex?%5Csin%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_4"> :<img src="https://latex.codecogs.com/png.latex?v_1%20+%20v_2"> * <img src="https://latex.codecogs.com/png.latex?v_5"> :<img src="https://latex.codecogs.com/png.latex?v_4+v_3"><br>
+之后, 就可以很轻松的求解函数在各步的函数值与导数值, 如下表所示. <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/i/2021-08-17-01-20-57.png" class="img-fluid" alt="2021-08-17-01-20-57"> 实现前向自动微分最简单的方法就是<em>Dual Number</em>法. 其核心思想是用<img src="https://latex.codecogs.com/png.latex?x+%5Cepsilon">替换 <img src="https://latex.codecogs.com/png.latex?x">作为输入, 利用Taylor展开: <img src="https://latex.codecogs.com/png.latex?%20f(x+b%20%5Cepsilon)%20=%20f(x)%20+%20f'(x)b%20%5Cepsilon%20"> 例如, 我们需要求解<img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20f%7D%7B%5Cpartial%20x_1%7D">, 则将<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> 从<img src="https://latex.codecogs.com/png.latex?x_1">改为<img src="https://latex.codecogs.com/png.latex?x_1%20+%20%5Cepsilon">. 之后, 我们需要实现各种基本函数下<img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> 的作用率, 例如: * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%20+%20(c+%20d%20%5Cepsilon)%20=%20(a+c)%20+%20(b+d)%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%5Ctimes%20(c+d%20%5Cepsilon)%20=%20ac%20+%20(bc+%20ad)%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Cln%20(a+b%20%5Cepsilon)%20=%20%5Cln%20a%20+%20%5Cfrac%7Bb%7D%7Ba%7D%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Csin%20(a+b%20%5Cepsilon)%20=%20%5Csin(a)+%20%5Ccos%20(a)%20b%20%5Cepsilon"><br>
+之后, 依次计算各个节点: * <img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D%20=%202%20+%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_0%20=%205"> * <img src="https://latex.codecogs.com/png.latex?v_1%20=%20%5Cln%202%20+%20%5Cfrac%7B%5Cepsilon%7D%7B2%7D"> * <img src="https://latex.codecogs.com/png.latex?v_2%20=%2010%20+%205%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_3%20=%20%5Csin%205"> * <img src="https://latex.codecogs.com/png.latex?v_4%20=%2010%20+%20%5Cln%202%20+%20%5Cfrac%7B11%20%5Cepsilon%7D%7B2%7D%20%5Capprox%2010.693%20+%205.5%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_5%20=%2010.693%20+%20%5Csin%205%20+%205.5%20%5Cepsilon%20%5Capprox%2011.652%20+%205.5%20%5Cepsilon"></p>
+<p>由此, 我们得到了在<img src="https://latex.codecogs.com/png.latex?(x_1=2,%20x_2=5)">处, 函数值为<img src="https://latex.codecogs.com/png.latex?10.693">, 对<img src="https://latex.codecogs.com/png.latex?x_1">的导数值为<img src="https://latex.codecogs.com/png.latex?5.5">.<br>
+代码上的实现也是很简单的, 我们只要构造Dual Number类型:</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><span class="kw" style="color: #003B4F;">struct</span> DualNumber <span class="op" style="color: #5E5E5E;">&lt;:</span><span class="dt" style="color: #AD0000;"> Number</span></span>
+<span id="cb1-2">    a<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Float64</span>;</span>
+<span id="cb1-3">    ϵ<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Float64</span>;</span>
+<span id="cb1-4"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+</div>
+<p>然后将各个基本函数重载(这里我们只重载了几个需要的函数):</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># 重载运算符, 实现对DualNumber的运算</span></span>
+<span id="cb2-2"><span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">+</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(x.a <span class="op" style="color: #5E5E5E;">+</span> y.a, x.ϵ <span class="op" style="color: #5E5E5E;">+</span> y.ϵ);</span>
+<span id="cb2-3"><span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">-</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(x.a <span class="op" style="color: #5E5E5E;">-</span> y.a, x.ϵ <span class="op" style="color: #5E5E5E;">-</span> y.ϵ);</span>
+<span id="cb2-4"><span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">*</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(x.a <span class="op" style="color: #5E5E5E;">*</span> y.a, x.ϵ <span class="op" style="color: #5E5E5E;">*</span> y.a <span class="op" style="color: #5E5E5E;">+</span> x.a <span class="op" style="color: #5E5E5E;">*</span> y.ϵ);</span>
+<span id="cb2-5"><span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">log</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(<span class="fu" style="color: #4758AB;">log</span>(x.a), x.ϵ<span class="op" style="color: #5E5E5E;">/</span>x.a);</span>
+<span id="cb2-6"><span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">sin</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(<span class="fu" style="color: #4758AB;">sin</span>(x.a), <span class="fu" style="color: #4758AB;">cos</span>(x.a) <span class="op" style="color: #5E5E5E;">*</span> x.ϵ);</span>
+<span id="cb2-7"><span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">tan</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(<span class="fu" style="color: #4758AB;">tan</span>(x.a), <span class="fu" style="color: #4758AB;">sec</span>(x.a)<span class="op" style="color: #5E5E5E;">^</span><span class="fl" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">*</span>x.ϵ);</span>
+<span id="cb2-8"><span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">sqrt</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">DualNumber</span>) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(<span class="fu" style="color: #4758AB;">sqrt</span>(x.a), x.ϵ<span class="op" style="color: #5E5E5E;">/</span>(<span class="fl" style="color: #AD0000;">2</span><span class="fu" style="color: #4758AB;">*sqrt</span>(x.a)));</span></code></pre></div>
+</div>
+<p>实现前向自动微分的过程之后就相当简单了:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><span class="kw" style="color: #003B4F;">function</span> <span class="fu" style="color: #4758AB;">FowardAD</span>(f, v<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Vector{Float64}</span>)<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Vector{Float64}</span></span>
+<span id="cb3-2">    grad <span class="op" style="color: #5E5E5E;">=</span> <span class="dt" style="color: #AD0000;">Float64</span>[]</span>
+<span id="cb3-3">    <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="fl" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">length</span>(v)</span>
+<span id="cb3-4">        dualV <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">map</span>(x<span class="op" style="color: #5E5E5E;">-&gt;</span>x<span class="op" style="color: #5E5E5E;">==</span>i ? <span class="fu" style="color: #4758AB;">DualNumber</span>(v[x], <span class="fl" style="color: #AD0000;">1</span>) <span class="op" style="color: #5E5E5E;">:</span> <span class="fu" style="color: #4758AB;">DualNumber</span>(v[x], <span class="fl" style="color: #AD0000;">0</span>), <span class="fl" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">length</span>(v));</span>
+<span id="cb3-5">        <span class="fu" style="color: #4758AB;">push!</span>(grad, <span class="fu" style="color: #4758AB;">f</span>(dualV).ϵ)</span>
+<span id="cb3-6">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb3-7">    grad</span>
+<span id="cb3-8"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>FowardAD (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>你很快就能发现我们这么做的优点:<strong>我们不需要对代码做任何更改, 我们可以接受并求解任何一个你能定义的函数</strong>. <code>FowardAD</code>函数接受一个任意的函数<img src="https://latex.codecogs.com/png.latex?f">, 与一个<img src="https://latex.codecogs.com/png.latex?n">维的向量<img src="https://latex.codecogs.com/png.latex?%5Bv_1,%20v_2,%5Ccdots,v_%7Bn%7D%5D">, 返回<img src="https://latex.codecogs.com/png.latex?f">在 <img src="https://latex.codecogs.com/png.latex?v">处的梯度 <img src="https://latex.codecogs.com/png.latex?%5B%5Cpartial%20f/%5Cpartial%20v_i%5D">.<br>
+下面是两个例子</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><span class="fu" style="color: #4758AB;">g</span>(x) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">log</span>(x[<span class="fl" style="color: #AD0000;">1</span>]) <span class="op" style="color: #5E5E5E;">+</span> x[<span class="fl" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>x[<span class="fl" style="color: #AD0000;">2</span>] <span class="op" style="color: #5E5E5E;">-</span> <span class="fu" style="color: #4758AB;">sin</span>(x[<span class="fl" style="color: #AD0000;">2</span>])</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;">f</span>(x) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">sum</span>(sin, x) <span class="op" style="color: #5E5E5E;">+</span> <span class="fu" style="color: #4758AB;">prod</span>(tan, x) <span class="op" style="color: #5E5E5E;">*</span> <span class="fu" style="color: #4758AB;">sum</span>(sqrt, x);</span>
+<span id="cb5-3">y <span class="op" style="color: #5E5E5E;">=</span> [<span class="fl" style="color: #AD0000;">2</span>., <span class="fl" style="color: #AD0000;">5</span>.]</span>
+<span id="cb5-4">x <span class="op" style="color: #5E5E5E;">=</span> [<span class="fl" style="color: #AD0000;">0.986403</span>, <span class="fl" style="color: #AD0000;">0.140913</span>, <span class="fl" style="color: #AD0000;">0.294963</span>, <span class="fl" style="color: #AD0000;">0.837125</span>, <span class="fl" style="color: #AD0000;">0.650451</span>];</span>
+<span id="cb5-5"><span class="fu" style="color: #4758AB;">println</span>(<span class="fu" style="color: #4758AB;">FowardAD</span>(f, x));</span>
+<span id="cb5-6"><span class="fu" style="color: #4758AB;">println</span>(<span class="fu" style="color: #4758AB;">FowardAD</span>(g, y));</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1.0135827245997349, 2.500134089883427, 1.7257370110780195, 1.1013890171195015, 1.2445004882356923]
+[5.5, 1.7163378145367738]</code></pre>
+</div>
+</div>
+<p>可以看出, 对于<img src="https://latex.codecogs.com/png.latex?f(x)"> 这种维数不定, 难以写出解析形式的函数, 代数微分难以求解, 但自动微分依然能得出相当精确的结果.</p>
+</section>
+<section id="自动微分-backward-mode" class="level2">
+<h2 class="anchored" data-anchor-id="自动微分-backward-mode">自动微分-Backward Mode</h2>
+<p>你可能会疑惑, 我们有了前向自动微分, 为什么还要研究什么Backward Mode自动微分呢? 答案很简单, 从前面的介绍你应当注意到, 对于一个<img src="https://latex.codecogs.com/png.latex?n"> 维的函数, 如果我们想要求得它在某点的梯度, 那么我们需要进行<img src="https://latex.codecogs.com/png.latex?n"> 次前向自动微分. 对于目前很多应用, 例如深度学习等, 函数的输入维数都是非常巨大的, 在这种情况下前向自动微分的效率就非常低, 这时就需要反向自动微分.<br>
+反向自动微分的原理也非常简单, 先进行一次正向的求解, 计算出每个节点处的函数值, 之后利用链式法则, 从后向前依次求出各节点的导数. 仍然用之前的例子: <img src="https://latex.codecogs.com/png.latex?%20f(x_1,%20x_2)%20=%20%5Cln%20x_1%20+%20x_1%5Ctimes%20x_2%20-%20%5Csin%20x_2"> <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/2021-08-17-01-22-35.png" class="img-fluid" alt="2021-08-17-01-22-35"> 其中<img src="https://latex.codecogs.com/png.latex?%5Coverline%7Bv_%7Bi%7D%7D"> 指代<img src="https://latex.codecogs.com/png.latex?%5Cpartial%20y/%5Cpartial%20v_%7Bi%7D">. 需要注意的是, <img src="https://latex.codecogs.com/png.latex?v_%7Bi%7D"> 应该被保存, 以供后续使用.<br>
+反向自动微分的原理非常简单, 但是实现上较前向自动微分困难一些. Dual Number方法不能使用, 我们需要构造AST, 从而进行反向求解.<br>
+首先, 我们需要构造节点结构, 其中<code>f</code>标记函数类型, <img src="https://latex.codecogs.com/png.latex?0">为 <img src="https://latex.codecogs.com/png.latex?%7B%5Crm%20id%7D">, <img src="https://latex.codecogs.com/png.latex?1">为加, <img src="https://latex.codecogs.com/png.latex?2"> 为减, <img src="https://latex.codecogs.com/png.latex?3"> 为乘…<br>
+<code>sons</code>为子节点的列表, 长度取决于函数的参数个数.<br>
+<code>value</code>为该节点的函数值.<br>
+<code>deri</code>为该节点的导数值.<br>
+<code>id</code>为该节点的id, 主要用于区分输入.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><span class="kw" style="color: #003B4F;">mutable struct</span> OpNode</span>
+<span id="cb7-2">    f<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Int64</span>;</span>
+<span id="cb7-3">    sons;</span>
+<span id="cb7-4">    value<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Float64</span>;</span>
+<span id="cb7-5">    deri<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Float64</span></span>
+<span id="cb7-6">    id<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Int64</span>;</span>
+<span id="cb7-7"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+</div>
+<p>接下来, 实现了<code>OpNode</code>的默认构造函数, 导数默认置<img src="https://latex.codecogs.com/png.latex?0">, 等待反向传播时再进行计算. <code>id</code>自动加一.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1">globalID <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0</span>;</span>
+<span id="cb8-2"><span class="kw" style="color: #003B4F;">function</span> <span class="fu" style="color: #4758AB;">OpNode</span>(f, sons, value)</span>
+<span id="cb8-3">    <span class="kw" style="color: #003B4F;">global</span> globalID;</span>
+<span id="cb8-4">    <span class="fu" style="color: #4758AB;">OpNode</span>(f, sons, value, <span class="fl" style="color: #AD0000;">0.0</span>, globalID <span class="op" style="color: #5E5E5E;">+=</span> <span class="fl" style="color: #AD0000;">1</span>);</span>
+<span id="cb8-5"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>OpNode</code></pre>
+</div>
+</div>
+<p>之后实现了对几种基本运算的重载:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><span class="kw" style="color: #003B4F;">function</span> <span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">+</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb10-2">    <span class="cf" style="color: #003B4F;">return</span> <span class="fu" style="color: #4758AB;">OpNode</span>(<span class="fl" style="color: #AD0000;">1</span>, [x, y], x.value <span class="op" style="color: #5E5E5E;">+</span> y.value);</span>
+<span id="cb10-3"><span class="kw" style="color: #003B4F;">end</span></span>
+<span id="cb10-4"></span>
+<span id="cb10-5"><span class="kw" style="color: #003B4F;">function</span> <span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">-</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb10-6">    <span class="cf" style="color: #003B4F;">return</span> <span class="fu" style="color: #4758AB;">OpNode</span>(<span class="fl" style="color: #AD0000;">2</span>, [x, y], x.value <span class="op" style="color: #5E5E5E;">-</span> y.value);</span>
+<span id="cb10-7"><span class="kw" style="color: #003B4F;">end</span></span>
+<span id="cb10-8"></span>
+<span id="cb10-9"><span class="kw" style="color: #003B4F;">function</span> <span class="bu" style="color: null;">Base</span>.<span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">*</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>, y<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb10-10">    <span class="cf" style="color: #003B4F;">return</span> <span class="fu" style="color: #4758AB;">OpNode</span>(<span class="fl" style="color: #AD0000;">3</span>, [x, y], x.value <span class="op" style="color: #5E5E5E;">*</span> y.value);</span>
+<span id="cb10-11"><span class="kw" style="color: #003B4F;">end</span></span>
+<span id="cb10-12"></span>
+<span id="cb10-13"><span class="kw" style="color: #003B4F;">function</span> <span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">log</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb10-14">    <span class="cf" style="color: #003B4F;">return</span> <span class="fu" style="color: #4758AB;">OpNode</span>(<span class="fl" style="color: #AD0000;">4</span>, [x], <span class="fu" style="color: #4758AB;">log</span>(x.value));</span>
+<span id="cb10-15"><span class="kw" style="color: #003B4F;">end</span></span>
+<span id="cb10-16"></span>
+<span id="cb10-17"><span class="kw" style="color: #003B4F;">function</span> <span class="bu" style="color: null;">Base</span>.<span class="fu" style="color: #4758AB;">sin</span>(x<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb10-18">    <span class="cf" style="color: #003B4F;">return</span> <span class="fu" style="color: #4758AB;">OpNode</span>(<span class="fl" style="color: #AD0000;">5</span>, [x], <span class="fu" style="color: #4758AB;">sin</span>(x.value));</span>
+<span id="cb10-19"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+</div>
+<p>注意, 至此我们就可以在不修改函数代码的情况下构造出一个AST, 同时完成前向计算各节点的函数值.<br>
+现在, 我们可以来实现反向自动微分的核心代码了</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><span class="kw" style="color: #003B4F;">function</span> <span class="fu" style="color: #4758AB;">evaluate</span>(root<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>)</span>
+<span id="cb11-2">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">0</span></span>
+<span id="cb11-3">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-4">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-5">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">1</span></span>
+<span id="cb11-6">        root.sons[<span class="fl" style="color: #AD0000;">1</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri;</span>
+<span id="cb11-7">        root.sons[<span class="fl" style="color: #AD0000;">2</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri;</span>
+<span id="cb11-8">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>]);</span>
+<span id="cb11-9">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">2</span>]);</span>
+<span id="cb11-10">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-11">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-12">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">2</span></span>
+<span id="cb11-13">        root.sons[<span class="fl" style="color: #AD0000;">1</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri;</span>
+<span id="cb11-14">        root.sons[<span class="fl" style="color: #AD0000;">2</span>].deri <span class="op" style="color: #5E5E5E;">-=</span> root.deri;</span>
+<span id="cb11-15">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>]);</span>
+<span id="cb11-16">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">2</span>]);</span>
+<span id="cb11-17">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-18">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-19">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">3</span></span>
+<span id="cb11-20">        root.sons[<span class="fl" style="color: #AD0000;">1</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri<span class="op" style="color: #5E5E5E;">*</span>root.sons[<span class="fl" style="color: #AD0000;">2</span>].value;</span>
+<span id="cb11-21">        root.sons[<span class="fl" style="color: #AD0000;">2</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri<span class="op" style="color: #5E5E5E;">*</span>root.sons[<span class="fl" style="color: #AD0000;">1</span>].value;</span>
+<span id="cb11-22">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>]);</span>
+<span id="cb11-23">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">2</span>]);</span>
+<span id="cb11-24">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-25">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-26">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">4</span></span>
+<span id="cb11-27">        root.sons[<span class="fl" style="color: #AD0000;">1</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.deri<span class="op" style="color: #5E5E5E;">/</span>root.sons[<span class="fl" style="color: #AD0000;">1</span>].value;</span>
+<span id="cb11-28">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>]);</span>
+<span id="cb11-29">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-30">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-31">    <span class="cf" style="color: #003B4F;">if</span> root.f <span class="op" style="color: #5E5E5E;">==</span> <span class="fl" style="color: #AD0000;">5</span></span>
+<span id="cb11-32">        root.sons[<span class="fl" style="color: #AD0000;">1</span>].deri <span class="op" style="color: #5E5E5E;">+=</span> root.<span class="fu" style="color: #4758AB;">deri*cos</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>].value);</span>
+<span id="cb11-33">        <span class="fu" style="color: #4758AB;">evaluate</span>(root.sons[<span class="fl" style="color: #AD0000;">1</span>]);</span>
+<span id="cb11-34">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb11-35">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb11-36"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>evaluate (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>根据每个节点的函数种类, 我们应用链式法则求出其子节点的导数值. 之后递归调用求解其子节点, 直到<code>sons</code>为<code>nothing</code>,即抵达叶节点为止.<br>
+下面这个函数可以从计算完成的树中取出指定<code>id</code>的节点的导数值, 用于输出.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><span class="kw" style="color: #003B4F;">function</span> <span class="fu" style="color: #4758AB;">getDeriByID</span>(root<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">OpNode</span>, id<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Int64</span>)</span>
+<span id="cb13-2">    <span class="cf" style="color: #003B4F;">if</span> root.id <span class="op" style="color: #5E5E5E;">==</span> id</span>
+<span id="cb13-3">        <span class="cf" style="color: #003B4F;">return</span> root.deri;</span>
+<span id="cb13-4">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb13-5">    <span class="cf" style="color: #003B4F;">if</span> root.sons <span class="op" style="color: #5E5E5E;">===</span> <span class="cn" style="color: #8f5902;">nothing</span></span>
+<span id="cb13-6">        <span class="cf" style="color: #003B4F;">return</span> ;</span>
+<span id="cb13-7">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb13-8">    <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> root.sons</span>
+<span id="cb13-9">        r <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">getDeriByID</span>(i, id);</span>
+<span id="cb13-10">        <span class="cf" style="color: #003B4F;">if</span> r<span class="op" style="color: #5E5E5E;">!==</span><span class="cn" style="color: #8f5902;">nothing</span></span>
+<span id="cb13-11">            <span class="cf" style="color: #003B4F;">return</span> r;</span>
+<span id="cb13-12">        <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb13-13">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb13-14"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>getDeriByID (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>之后, 我们就可以完成反向自动微分的完整逻辑了.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><span class="kw" style="color: #003B4F;">function</span> <span class="fu" style="color: #4758AB;">BackwardAD</span>(f, v<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Vector{Float64}</span>)<span class="op" style="color: #5E5E5E;">::</span><span class="dt" style="color: #AD0000;">Vector{Float64}</span></span>
+<span id="cb15-2">    res <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">zeros</span>(<span class="fu" style="color: #4758AB;">length</span>(v));</span>
+<span id="cb15-3">    root <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">f</span>(<span class="fu" style="color: #4758AB;">map</span>(<span class="fu" style="color: #4758AB;">x-&gt;OpNode</span>(<span class="fl" style="color: #AD0000;">0</span>, <span class="cn" style="color: #8f5902;">nothing</span>, x), v));</span>
+<span id="cb15-4">    root.deri <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1</span>.;</span>
+<span id="cb15-5">    <span class="fu" style="color: #4758AB;">evaluate</span>(root);</span>
+<span id="cb15-6">    <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="fl" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">:</span><span class="fu" style="color: #4758AB;">length</span>(v)</span>
+<span id="cb15-7">        res[i] <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">getDeriByID</span>(root, i);</span>
+<span id="cb15-8">    <span class="cf" style="color: #003B4F;">end</span></span>
+<span id="cb15-9">    <span class="cf" style="color: #003B4F;">return</span> res;</span>
+<span id="cb15-10"><span class="kw" style="color: #003B4F;">end</span></span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>BackwardAD (generic function with 1 method)</code></pre>
+</div>
+</div>
+<p>我们将输入向量<code>v</code>转变为一系列叶节点(即<code>map(x-&gt;OpNode(0, nothing, x), v)</code>语句), 并传入给定函数. 由于我们实现了对各基本操作的重载, 计算该函数时即完成了AST的构建和前向计算各节点函数值的过程, 并返回根节点. 之后, 将根节点的导数值设为1, 并开始反向自动微分. 完成后返回相应的梯度向量即可.<br>
+一个相同的例子:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><span class="fu" style="color: #4758AB;">f</span>(x) <span class="op" style="color: #5E5E5E;">=</span> <span class="fu" style="color: #4758AB;">log</span>(x[<span class="fl" style="color: #AD0000;">1</span>]) <span class="op" style="color: #5E5E5E;">+</span> x[<span class="fl" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>x[<span class="fl" style="color: #AD0000;">2</span>] <span class="op" style="color: #5E5E5E;">-</span> <span class="fu" style="color: #4758AB;">sin</span>(x[<span class="fl" style="color: #AD0000;">2</span>]);</span>
+<span id="cb17-2"><span class="fu" style="color: #4758AB;">println</span>(<span class="fu" style="color: #4758AB;">BackwardAD</span>(f, [<span class="fl" style="color: #AD0000;">2</span>., <span class="fl" style="color: #AD0000;">5</span>.]));</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[5.5, 1.7163378145367738]</code></pre>
+</div>
+</div>
+</section>
+<section id="reference与tips" class="level2">
+<h2 class="anchored" data-anchor-id="reference与tips">Reference与Tips</h2>
+<ul>
+<li>本文中所有图片来自于<a href="https://arxiv.org/abs/1502.05767">arXiv:1502.05767</a>, 如果你想了解更多, 更严格的关于自动微分的内容, 强烈推荐你读一读这篇综述.</li>
+<li>本文中没有考虑多输出函数的情况. 实际上, 标准的Automatic Differentiation程序应当给出Jacobian矩阵, 而不是梯度向量. 相应的, 对于当输出维度很大, 而输入维度相对较小的情况下, 前向自动微分的性能就要优于反向自动微分了.</li>
+<li>关于两种自动微分, 本文中只展现了一个最简单, 最易实现的实现方式. 实际的自动微分有许多细节, 例如, 对AST进行图优化, 基于元编程的Differiatial Rule生成等等. 如果你想深入学习, 你应当读一读大项目中的AD实现. 作为推荐, Julia目前实现了一套相当好的可微分编程环境, 你可以读一读<a href="https://github.com/JuliaDiff/ForwardDiff.jl">FowardDiff.jl</a>以及<a href="https://github.com/JuliaDiff/ReverseDiff.jl">ReverseDiff.jl</a>的代码.</li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/AutomaticDifferentiation/AutomaticDifferentiation.html</guid>
+  <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz27.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>2021年上半年ACG杂谈</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/2021上杂谈/2021上杂谈.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="年上半年acg杂谈" class="level1">
+<h1>2021年上半年ACG杂谈</h1>
+<section id="动画篇" class="level2">
+<h2 class="anchored" data-anchor-id="动画篇">动画篇</h2>
+<p>谁能想到上半年最好看的两部番分别是萌豚和偶像番呢?(死宅真恶心.jpg) ### 当季作品</p>
+<ul>
+<li><p><strong>赛马娘II 9.5/10</strong></p>
+<p>我心目中近三年来<strong>最好看</strong>的番, 人物形象很鲜明, 节奏把握的也很好,. 帝王和麦昆的友谊(百合)也拍的很好. 双涡轮和帝王有马纪念复活两集属实展示了一个偶像番能有多热血. 动画质量上整体也比第一季好了不少(虽然还是有祖传谜之3D).</p>
+<p>如果一定要说缺点的话, 一个就是题材相对比较小众. 另一个就是刻画米浴的两集和主线有些脱节, 和双涡轮不同, 米浴的故事对主角影响不大, 不过考虑到帝王的职业生涯很大一部分都在伤病中度过, 需要一些其他故事来填充内容, 也算上无伤大雅(而且做的好看啊).</p>
+<p>整体来说算是神作, 可惜国内没有赛马文化, 导致在国内不温不火. 不过BD销量充分证明了实力和受欢迎程度. 期待第三季(cy多给小特一些剧情吧, 第二季斯佩酱完全成节目效果了).</p></li>
+<li><p><strong>摇曳露营 第二季 9.2/10</strong></p>
+<p>芳文社拿手的废萌百合番, 老套的题材, 但功力一看便知. 人物不需要一些夸张而不真实的萌属性来展示萌点, 也没有什么高深而复杂的内核与立意. 对日常的细节刻画可以说是第一梯队的水平.</p>
+<p>没啥好说的, 质量相当上乘的废萌日常番.</p></li>
+<li><p><strong>奇巧计程车 9.2/10</strong> 很不错的原创番, 脚本制作水平很高(虽然也有点同行衬托的因素在里面). 如果一定要找缺点的话可能一个在于情节较为紧凑, 如果分成两季比较好. 另一点在于很多内容塞到了广播剧里, 导致如果你不去认真看广播剧, 动画里很多剧情存在bug, 这一点可能也是时长限制的原因.</p></li>
+<li><p><strong>佐贺偶像是传奇 第二季 8.5/10</strong></p>
+<p>没看过第一季, 挺新奇的设定(僵尸偶像就离谱). 不过细究下来可以理解作者使用这一设定的目的. 很多偶像番之所以烂, 是没有讲好偶像的成长, 换句话说, 主角是怎么成长为偶像的. 而佐贺在这点做的就很好. 让一群”死气沉沉”的僵尸, 来拯救佐贺死气沉沉的经济, 带动观众, 带动生者. 我觉得至少在展现偶像的成长上佐贺做的不错.</p></li>
+<li><p><strong>奇蛋物语 8.4/10</strong> 作画和演出非常优秀, 但是剧情上略显拉跨, 单元剧的撕裂感太强, 最后经典的奇幻转科幻机械降神. 整部番剧的动画制作和脚本制作不在一个水平线上, 后期烂尾略显严重.<br>
+B站评论沾点饭圈, 另外特别篇也是有够烂的.(这两点不参与评分).</p></li>
+<li><p><strong>RE0: 从零开始的异世界生活 第二季后半 8.2/10</strong></p>
+<p>先高喊:“白狐,我的超人!”. 白狐的制作真的非常良心了, 最后结尾也是制作的比较好的, 燃起来了.jpg. 画面上场景的光影拿捏挺不错的,其他方面也保持在中上水平.</p>
+<p>缺点也比较明显:</p>
+<ol type="1">
+<li>台词太冗长了. 虽然长月老贼就是这种风格, 但是动画里镜头一拉给个远景, 然后大伙动也不动, 要么就绕着一个东西转, 然后就开始一直念了, 特别是到剧情中段的时候.</li>
+<li>谜语人剧情. 虽然小说里也是这个剧情, 但动画里做的属实有点太谜语人了, 导致我一个知道剧情的人都看晕了,就挺离谱的.</li>
+</ol></li>
+<li><p><strong>关于我转生成为史莱姆这件事 第二季 8/10</strong></p>
+<p>看完以后甚至不知道日记和这个哪个才是番外了, 真的水. 上半部分有成魔王的情节撑着, 感觉下半年的文戏部分会更水.</p></li>
+<li><p><strong>vivy: 萤石眼之歌 8/10</strong></p>
+<p>歌很好听, 如果有上半年最佳配乐奖应该就颁给他了.很熟悉的机器人对心的探讨, 不同的是这次换了个非战狂的文艺演员来. 第四集空间站坠落算是神回了, 但最后结局处理不是很好. 而且很多设定上存在一些问题, 大概把机器人理解成某种精灵就没问题了.</p>
+<p>(不过唱歌机器人到底是用扬声器还是声带啊)</p></li>
+<li><p><strong>86 不存在的战区 7/10</strong></p>
+<p>可以看出来作者觉得自己想出来了一个很cool的想法, 但我觉得, 你如果想讲一个现实主义的故事, 那你的设定在现实一定是可行的. 86不受信任, 被派到前线去死, 骗服役五年变成正常人的谎言也破灭了, 动画里也没展现出zf对86的高压统治或是情报管理, 86不造反只能说离了天下之大谱.</p>
+<p>其他各种nt设定也一堆, 但除开设定的问题都还不错.</p></li>
+<li><p><strong>致不灭的你 6.5/10</strong></p>
+<p>前两集挺吸引人的, 但后面实在是太拖沓了, 画面在21年的水平下不算好.</p>
+<p>很优秀的设定, 但脚本和制作的水平没能将这个设定发挥出来. 再加上后续漫画和动画的一些分歧(指某站弹幕), 导致观感不佳.</p></li>
+</ul>
+<section id="不予评分作品" class="level3">
+<h3 class="anchored" data-anchor-id="不予评分作品">不予评分作品:</h3>
+<ul>
+<li><p><strong>剃须,然后捡到女高中生</strong></p>
+<p>奇怪的设定, 有一些靠设定引流的嫌疑. 喜欢设定的可以去看.</p></li>
+<li><p><strong>打了三百年史莱姆, 不知不觉就升到了满级</strong></p>
+<p>没啥新意的泡面番, 图一乐可以看看</p></li>
+<li><p><strong>水果篮子 最终季</strong></p>
+<p>终于完结了, 算是很久远的回忆了.</p></li>
+</ul>
+</section>
+<section id="不推荐作品" class="level3">
+<h3 class="anchored" data-anchor-id="不推荐作品">不推荐作品:</h3>
+<ul>
+<li><p><strong>蔚蓝反射 澪</strong></p>
+<p>画风令人震惊, 很像少年宫里画的彩铅画(高情商:淡雅). 百合扭曲的剧情, 拍的真的迷, 强烈不推荐观看.</p></li>
+<li><p><strong>伊甸星原</strong></p>
+<p>如果你是妖尾厨那么建议去再刷一遍妖尾, 不要来这里上当. 而且还沾点媚俗.</p></li>
+</ul>
+</section>
+<section id="补番" class="level3">
+<h3 class="anchored" data-anchor-id="补番">补番</h3>
+<ul>
+<li><strong>异种族风俗娘评鉴指南 8.5/10</strong> 怎么说呢, 介于里表之间的番剧, 制作水平其实相当不错. 题材相当新颖. 缺点的话一个就是评测不咋样, 怎么没把内核写好呢. 第二个就是其实也不是很异种族, 绝大多数异种族风俗娘都得到了极大的拟人化, 沾点XP噱头了.</li>
+</ul>
+</section>
+</section>
+<section id="漫画篇" class="level2">
+<h2 class="anchored" data-anchor-id="漫画篇">漫画篇</h2>
+<p>没怎么看, 就日常看海贼,然后看了巨人. 海贼没啥好说的, 能早日完结我就心满意足了, 巨人也没啥好说的, jscnmsl.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://yqwu.site/posts/2021上杂谈/https:/image.yqwu.site/i/5ef8b977e7756f24d84bbb82794f4695ee6bfe280b4eb1110ec73ed7d1ee3ebc.jpg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">meme</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="游戏篇" class="level2">
+<h2 class="anchored" data-anchor-id="游戏篇">游戏篇</h2>
+<p>全nm在玩群星和lol了, 基本没怎么推新游戏.</p>
+<ul>
+<li><p><strong>Nier Replicant 重制版 8.4/10</strong></p>
+<p>重置的还是不错的, 白金发挥稳定, 算是帮我这种从机械纪元才入坑的玩家补了补剧情.</p>
+<p>手感一流.</p>
+<p>剧情还不错, 有新意, 反正我玩到一半的时候是一点都猜不到后面的剧情.</p>
+<p>地图,怪物和流程设计算是扣分项, 首先绝大多数怪物的攻击方式都没有区别(我感觉还没4399丰富), 其次地图也有点阴间, 尤其是机械山, 各种任务之类的重复度也相当高.</p>
+<p>人物上对主角和妹妹的刻画其实比较失败, 但对两个同伴, 凯尼和埃米尔绝对是很大的亮点(埃米尔, 我的埃米尔😭😭😭)</p></li>
+<li><p><strong>生化危机:村庄 8/10</strong></p>
+<p>重启之后第二部, 万众期待的机8, 首先声明, Capcom做的相当好, 完全值得一个九分的成绩, 但是傻逼的国区定价-1分</p></li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/2021上杂谈/2021上杂谈.html</guid>
+  <pubDate>Mon, 26 Jul 2021 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz29.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Noether定理</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/Noether定理/Noether定理.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="noether定理" class="level1">
+<h1>Noether定理</h1>
+<blockquote class="blockquote">
+<p>最近看Atland的凝聚态场论, 对Noether定理的证明与讲解的部分感到有些含糊(毕竟这种东西应该放在理力里讲), 在此做一些总结</p>
+</blockquote>
+<section id="守恒律" class="level2">
+<h2 class="anchored" data-anchor-id="守恒律">守恒律</h2>
+<p>考虑一个泛函<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BJ%7D">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D(q)%20=%20%5Cint%20_%7Bt_0%7D%5E%7Bt_1%7D%20%5Cmathcal%7BL%7D(t,%20q,%20%5Cdot%7Bq%7D,%5Ccdots,%20q%5E%7B(n)%7D)%7B%5Crm%20d%7Dt%5Ctag%7B1%7D"></p>
+<p>若存在一个函数<img src="https://latex.codecogs.com/png.latex?%5Cphi(t,%20q,%20%5Cdot%7Bq%7D,%5Ccdots,q%5E%7Bk%7D)">满足,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Crm%20d%7D%7B%7B%5Crm%20d%7D%20t%7D%5Cphi(t,%20q,%20%5Cdot%7Bq%7D,%5Ccdots,q%5E%7B(k)%7D)%20=%200%5Ctag%7B2%7D"></p>
+<p>则称上式为<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D">的<img src="https://latex.codecogs.com/png.latex?k"> 阶守恒律, 相应的<img src="https://latex.codecogs.com/png.latex?%5Cphi"> 称为<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D"> 的守恒量.</p>
+<blockquote class="blockquote">
+<p><em>Example 1</em><br>
+考虑一个不显含时间的作用量: <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D(q)%20=%20%5Cint%20_%7Bt_0%7D%5E%7Bt_1%7D%5Cmathcal%7BL%7D(q,%5Cdot%7Bq%7D)%7B%5Crm%20d%7D%20t"> 显然的,我们可以找到其一阶守恒律 <img src="https://latex.codecogs.com/png.latex?H%20=%20%5Cdot%7Bq%7D%20%5Cfrac%7B%5Cpartial%20%5Cmathcal%7BL%7D%7D%7B%5Cpartial%20%5Cdot%7Bq%7D%7D%20-%20%5Cmathcal%7BL%7D"></p>
+</blockquote>
+</section>
+<section id="对称性" class="level2">
+<h2 class="anchored" data-anchor-id="对称性">对称性</h2>
+<p>对于一个给定的作用量：</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cmathcal%7BS%7D(q)%20=%20%5Cint%20%5E%7Bt_1%7D_%7Bt_0%7D%20%5Cmathcal%7BL%7D(t,q,%5Cdot%7Bq%7D)%7B%5Crm%20d%7D%20t%20%5Ctag%7B3%7D"></p>
+<p>考虑两个单参变换,并要求他们是<img src="https://latex.codecogs.com/png.latex?C%5E%7B%5Cinfty%7D">的:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20X=%5Ctheta(t,q;%5Cepsilon)%5Cquad%20Y%20=%20%5Cpsi(t,q;%5Cepsilon)%20%5Ctag%7B4%7D"></p>
+<p>满足:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Ctheta(t,q;0)=t%5Cquad%20%5Cpsi(t,q;0)%20=%20q%20%5Ctag%7B5%7D"></p>
+<blockquote class="blockquote">
+<p>Example 2<br>
+平移变换:<img src="https://latex.codecogs.com/png.latex?X=x+%5Ccos%20%5Ctheta%20%5C;%5Cepsilon,%20Y=y+%5Csin%20%5Ctheta%5C;%20%5Cepsilon"><br>
+旋转变换:<img src="https://latex.codecogs.com/png.latex?X%20=%20x%5Ccos%20%5Cepsilon%20+%20y%20%5Csin%20%5Cepsilon,Y%20=%20-x%5Csin%20%5Cepsilon%20+%20y%5Ccos%20%5Cepsilon"></p>
+</blockquote>
+<p>Jacobian矩阵为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20J=%5Cfrac%7B%5Cpartial%20(X,Y)%7D%7B%5Cpartial(t,q)%7D%20=%20%5Cbegin%7Bpmatrix%7D%5Cfrac%7B%5Cpartial%20%5Ctheta%7D%7B%5Cpartial%20t%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Ctheta%7D%7B%5Cpartial%20q%7D%5C%5C%20%5Cfrac%7B%5Cpartial%20%5Cpsi%7D%7B%5Cpartial%20t%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cpsi%7D%7B%5Cpartial%20q%7D%5Cend%7Bpmatrix%7D%20%20=%20%5Cbegin%7Bpmatrix%7D%5Ctheta_%7Bt%7D&amp;%20%5Ctheta_%7Bq%7D%5C%5C%20%5Cpsi_%7Bt%7D%20&amp;%20%5Cpsi_%7Bq%7D%5Cend%7Bpmatrix%7D%20%5Ctag%7B6%7D"></p>
+<p>行列式为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7CJ%7C%20=%20%5Ctheta_%7Bt%7D%20%5Cpsi_%7Bq%7D%20-%20%5Ctheta_%7Bt%7D%5Cpsi_%7Bq%7D%20%5Ctag%7B7%7D"></p>
+<p>当<img src="https://latex.codecogs.com/png.latex?%5Cepsilon=0"> 时,我们有:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7CJ%7C%20=%201%20%5Ctag%7B8%7D"></p>
+<p>由于<img src="https://latex.codecogs.com/png.latex?%5Ctheta"> 与<img src="https://latex.codecogs.com/png.latex?%5Cpsi"> 均是<img src="https://latex.codecogs.com/png.latex?C%5E%7B%5Cinfty%7D">的, <img src="https://latex.codecogs.com/png.latex?%7CJ%7C"> 也是连续的,因此在<img src="https://latex.codecogs.com/png.latex?%5Cepsilon=0"> 的一个足够小的邻域内<img src="https://latex.codecogs.com/png.latex?%7CJ%7C%5Cneq%200">,即, 我们可以找到一组逆映射将<img src="https://latex.codecogs.com/png.latex?(X,Y)"> 映回<img src="https://latex.codecogs.com/png.latex?(t,q)">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20t%20=%20%5CTheta(X,Y;%5Cepsilon)%5Cquad%20q%20=%20%5CPsi(X,Y;%5Cepsilon)%20%5Ctag%7B9%7D"></p>
+<p>现在考虑一个给定的轨迹<img src="https://latex.codecogs.com/png.latex?q(t)">,变换后的轨迹由一组参数方程给定:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20X_%7B%5Cepsilon%7D%20=%20%5Ctheta(t,q;%5Cepsilon)%5Cquad%20Y_%7B%5Cepsilon%7D%20=%20%5Cpsi(t,q;%5Cepsilon)%20%5Ctag%7B10%7D"></p>
+<p>现在我们可以定义<strong>变分不变性</strong>,作用量<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D"> 的拉氏量<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D"> 称为在区间<img src="https://latex.codecogs.com/png.latex?%5Bt_0,t_1%5D"> 上变分不变,当其满足,对<img src="https://latex.codecogs.com/png.latex?%5Cforall%20%5Ba,b%5D%5Cin%5Bt_0,t_1%5D">, <img src="https://latex.codecogs.com/png.latex?%5Cexist%5Cdelta%5Cin%20%5Cmathbb%7BR%7D">,使得<img src="https://latex.codecogs.com/png.latex?%5Cforall%20%5Cepsilon%3C%20%5Cdelta">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cint%5E%7Ba%7D_%7Bb%7D%5Cmathcal%7BL%7D(t,q,%5Cdot%7Bq%7D)%20%7B%5Crm%20d%7D%20t%20=%20%5Cint%5E%7Ba_%7B%5Cepsilon%7D%7D_%7Bb_%7B%5Cepsilon%7D%7D%5Cmathcal%7BL%7D(X_%7B%5Cepsilon%7D,Y_%7B%5Cepsilon%7D%20,%5Cdot%7BY_%7B%5Cepsilon%7D%7D)%7B%5Crm%20d%7D%20X%20%5Ctag%7B11%7D"></p>
+<blockquote class="blockquote">
+<p>Example 3<br>
+<img src="https://latex.codecogs.com/png.latex?%20%5Cmathcal%7BL%7D(t,q,%5Cdot%20q)%20=%20%5Cdot%20q%5E%7B2%7D(x)%20+%20q%5E%7B2%7D(x)%20"> 考虑时间平移变换: <img src="https://latex.codecogs.com/png.latex?%20X%20=%20t+%5Cepsilon,%5Cquad%20Y=q%20"> 我们有 <img src="https://latex.codecogs.com/png.latex?%20%5Cdot%20Y_%7B%5Cepsilon%7D%20=%20%5Cdot%20q%20"> 则,对于给定的一个区间<img src="https://latex.codecogs.com/png.latex?%5Bt_0,t_1%5D">, 我们有: <img src="https://latex.codecogs.com/png.latex?%20%5Cint%5E%7Bt_1%7D_%7Bt_0%7D(%5Cdot%20q%5E%7B2%7D%20+%20q%5E%7B2%7D)%20%7B%5Crm%20d%7Dt%20=%20%5Cint%20%5E%7Bt_1+%5Cepsilon%7D_%7Bt_0+%5Cepsilon%7D(%5Cdot%20Y_%7B%5Cepsilon%7D%20+%20Y%5E%7B2%7D_%7B%5Cepsilon%7D)=%5Cint%5E%7Bt_1+%5Cepsilon%7D_%7Bt_0+%5Cepsilon%7D(%5Cdot%20q%20+%20q(t-%5Cepsilon))%7B%5Crm%20d%7Dt%20"> 成立,即上式的拉氏量在时间平移变换下是不变的</p>
+</blockquote>
+<p>进一步的,在讨论Noether定理前,我们介绍一种描述变换的通用方式,即<sup>1</sup> :</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cbegin%7Baligned%7DX%5Capprox%20t%20+%20%5Cepsilon%20%5Czeta%20%5C%5C%20Y%5Capprox%20q+%5Cepsilon%20%5Ceta%5Cend%7Baligned%7D%20%5Ctag%7B12%7D%20"></p>
+<p>其中, <img src="https://latex.codecogs.com/png.latex?%5Cepsilon,%5Ceta"> 为任意光滑函数, 称为变换的<strong>生成函数</strong>. 具体的, 与(4)式比较,我们有:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cbegin%7Baligned%7D%5Czeta(t,q)%20=%20%5Cleft.%5Cfrac%7B%5Cpartial%20%5Ctheta%7D%7B%5Cpartial%20%5Cepsilon%7D%5Cright%7C_%7B(t,q;0)%7D%20%5C%5C%20%5Cepsilon(t,q)%20=%20%5Cleft.%5Cfrac%7B%5Cpartial%20%5Cpsi%7D%7B%5Cpartial%20%5Cepsilon%7D%5Cright%7C_%7B(t,q;0)%7D%20%5Cend%7Baligned%7D%20%5Ctag%7B13%7D"></p>
+</section>
+<section id="noether-定理" class="level2">
+<h2 class="anchored" data-anchor-id="noether-定理">Noether 定理</h2>
+<p><strong>Noether定理</strong>:若<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(t,q,%5Cdot%20q)">在<img src="https://latex.codecogs.com/png.latex?%5Bt_0,t_1%5D">上对于生成函数为<img src="https://latex.codecogs.com/png.latex?%5Czeta,%5Ceta"> 的变换具有变分不变性, 则:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Ceta%5Cfrac%7B%5Cpartial%20%5Cmathcal%7BL%7D%7D%7B%5Cpartial%20%5Cdot%20q%7D%20+%20%5Czeta%5Cleft(%5Cmathcal%7BL%7D%20-%20%5Cfrac%7B%5Cpartial%20%5Cmathcal%7BL%7D%7D%7B%5Cpartial%20%5Cdot%20q%7D%5Cdot%20q%5Cright)%20=%20%5Ctext%7Bconst%7D%20%5Ctag%7B14%7D"></p>
+<p>在作用量<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D"> 的任意极值轨道上成立.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cmathcal%7BS%7D%20%20=%5Cint%20%5E%7Bt_1%7D_%7Bt_0%7D%5Cmathcal%7BL%7D(t,q,%5Cdot%20q)%7B%5Crm%20d%7D%20t%20%5Ctag%7B15%7D"></p>
+<p>(13)式也可以写为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Ceta%20p%20-%20%5Czeta%20%5Cmathcal%7BH%7D%20=%20%5Ctext%7Bconst%7D%20%5Ctag%7B16%7D"></p>
+<p><img src="https://latex.codecogs.com/png.latex?p%20=%20%5Cfrac%7B%5Cpartial%20%5Cmathcal%7BL%7D%7D%7B%5Cpartial%20%5Cdot%20q%7D"> 为相对于<img src="https://latex.codecogs.com/png.latex?q"> 的广义动量, <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BH%7D%20=%20%5Cmathcal%7BL%7D%20-%20p%5Cdot%20q">为哈密顿量.</p>
+<blockquote class="blockquote">
+<p>Proof. 令 <img src="https://latex.codecogs.com/png.latex?%20%20%5Cwidetilde%7B%5Cmathcal%7BS%7D%7D(q)%20=%20%5Cint%5E%7Bb%7D_%7Ba%7D%5Cmathcal%7BL%7D(t,q,%5Cdot%20q)%7B%5Crm%20d%7D%20t%20"> 由定义(11), <img src="https://latex.codecogs.com/png.latex?%5Cforall%20%5Ba,b%5D%5Cin%20%5Bt_0,%20t_1%5D">, 有: <img src="https://latex.codecogs.com/png.latex?%20%5Cwidetilde%7BS%7D(Y_%7B%5Cepsilon%7D)%20%20-%20%5Cwidetilde%7BS%7D(q)%20=%20%5Cint%5E%7Bb_%7B%5Cepsilon%7D%7D_%7Ba_%7B%5Cepsilon%7D%7D%5Cmathcal%7BL%7D(X,Y_%7B%5Cepsilon%7D,%5Cdot%20Y_%7B%5Cepsilon%7D)%20%7B%5Crm%20d%7D%20X%20-%20%5Cint%5E%7Bb%7D_%7Ba%7D%5Cmathcal%7BL%7D(t,q,%5Cdot%20q)%7B%5Crm%20d%7D%20t%20=%200"> 对于足够小的<img src="https://latex.codecogs.com/png.latex?%5Cepsilon">成立, 我们有: <img src="https://latex.codecogs.com/png.latex?%20X%20=%20t+%5Cepsilon%20%5Czeta%20+%20O(%5Cepsilon%5E%7B2%7D)%20=%20t%20+%20%5Cepsilon%20X_%7B0%7D%20"> <img src="https://latex.codecogs.com/png.latex?%20Y_%7B%5Cepsilon%7D%20=%20q+%20%20%5Cepsilon%20%5Ceta%20+%20O(%5Cepsilon%5E%7B2%7D)%20=%20q%20+%20%5Cepsilon%20Y_%7B0%7D%20"> 或者, 上式给定了<img src="https://latex.codecogs.com/png.latex?%5Cdelta%20t%20=%20%5Czeta,%20%5Cdelta%20q%20=%20%5Ceta">.<br>
+对于上述变分问题, 其取极值时, 我们有: <img src="https://latex.codecogs.com/png.latex?%20%5Cleft.p%20%5Cdelta%20q%20-%20%5Cmathcal%7BH%7D%20%5Cdelta%20t%5Cright%7C%5E%7Bx_1%7D_%7Bx_2%7D%20=%200"> 代入: <img src="https://latex.codecogs.com/png.latex?%20%5Ceta%20p%20-%20%5Czeta%20%5Cmathcal%7BH%7D%7C%5E%7Bb%7D_%7Ba%7D%20=%200%20"> 由于<img src="https://latex.codecogs.com/png.latex?a,b">为满足 <img src="https://latex.codecogs.com/png.latex?t_0%5Cleq%20a%20%3C%20b%5Cleq%20t_1">的任意实数, 因此上式成立的唯一可能为: <img src="https://latex.codecogs.com/png.latex?%20%20%5Ceta%20p%20-%20%5Czeta%20%5Cmathcal%7BH%7D%20=%20%5Ctext%7Bconst%7D%20"> Q.E.D</p>
+</blockquote>
+<p>进一步的, 对于<img src="https://latex.codecogs.com/png.latex?n"> 个自由度的体系,Noether定理可以进行推广,拉氏量的形式变为<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(t,%7B%5Cbf%20q%7D,%5Cdot%20%7B%5Cbf%20q%7D)">, <img src="https://latex.codecogs.com/png.latex?%7B%5Cbf%20q%7D%20=%20(q_1,%5Ccdots,%20q_%7Bn%7D)">, 给定由<img src="https://latex.codecogs.com/png.latex?%5Czeta,%5Ceta_%7Bk%7D">生成的变换,其中:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20Y_%7Bk%7D%20=%20q_%7Bk%7D%20+%20%5Cepsilon%20%5Ceta_%7Bk%7D%20%5Ctag%7B17%7D"></p>
+<p>广义动量与哈氏量为<sup>2</sup> : <img src="https://latex.codecogs.com/png.latex?%20%5Cbegin%7Baligned%7D&amp;p_%7Bk%7D%20=%20%5Cfrac%7B%5Cpartial%20%5Cmathcal%7BL%7D%7D%7B%5Cpartial%20%5Cdot%20q_%7Bk%7D%7D%20%5C%5C%0A&amp;%5Cmathcal%7BH%7D%20=%20p_%7Bk%7D%5Cdot%20q_%7Bk%7D%20-%20%5Cmathcal%7BL%7D%5Cend%7Baligned%7D%5Ctag%7B18%7D"> 则守恒量为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20p_%7Bk%7D%20%5Ceta_%7Bk%7D%20-%20%5Cmathcal%7BH%7D%20%5Czeta%20=%20%5Ctext%7Bconst%7D%20"></p>
+<p>接下来,我们展示几个具体的例子:</p>
+<ul>
+<li><p>时间平移不变性和能量守恒<br>
+考虑时间变换<img src="https://latex.codecogs.com/png.latex?T=t+%5Cepsilon,%20Q_%7Bk%7D%20=%20q_%7Bk%7D"> 我们有:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%5Czeta%20=%201,%20%5Ceta_%7Bk%7D%20=%200%5Cend%7Baligned%7D"></p>
+<p>则相应的守恒量为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Cmathcal%7BH%7D%20=%20%5Ctext%7Bconst%7D%20"></p>
+<p>即, 能量守恒对应于时间平移不变性.</p></li>
+<li><p>空间平移不变性与动量守恒<br>
+考虑空间平移变换:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20T%20=%20t,%20Q_%7Bk%7D%20=%20q_%7Bk%7D%20+%20%5Cepsilon%20%5Ceta_%7Bk%7D%20"></p>
+<p>则守恒量为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20p_%7Bk%7D%20%5Ceta_%7Bk%7D%20=%20%5Ctext%7Bconst%7D%20"></p>
+<p>即, 动量守恒对应于空间平移不变性.</p></li>
+<li><p>空间旋转不变性与角动量守恒<br>
+由于三维旋转较为复杂, 我们作为例子仅考虑绕<img src="https://latex.codecogs.com/png.latex?z"> 轴的一个旋转.</p>
+<p><img src="https://latex.codecogs.com/png.latex?T%20=%20t"> <img src="https://latex.codecogs.com/png.latex?Q_%7B1%7D%20=%20q_%7B1%7D%5Ccos%20%5Cepsilon%20+%20q_%7B2%7D%20%5Csin%20%5Cepsilon"> <img src="https://latex.codecogs.com/png.latex?Q_%7B2%7D%20=%20-q_%7B1%7D%5Csin%20%5Cepsilon%20+%20q_%7B2%7D%20%5Ccos%20%5Cepsilon"> <img src="https://latex.codecogs.com/png.latex?Q_%7B3%7D%20=%20q_%7B3%7D"></p>
+<p>取<img src="https://latex.codecogs.com/png.latex?%5Cepsilon%5Cto%200"> 的极限(即,无穷小旋转),我们有:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%5Czeta=0,%20%5Ceta_%7B1%7D%20=%20q_2,%20%5Ceta_%7B2%7D%20=%20-q_1,%20%5Ceta_3%20=%200"></p>
+<p>对应的守恒量为:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20p_1%20q_2%20-%20p_2%20q_1%20=%20%5Ctext%7Bconst%7D%20"></p>
+<p>这就是角动量的<img src="https://latex.codecogs.com/png.latex?z"> 分量,即空间旋转对称性对应于角动量守恒.</p></li>
+</ul>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>这一部分实际需要证明, 依赖于泛函上的Taylor定理,由于思路与普通的Taylor定理相似,此处不予证明,感兴趣的可以参考Atland &amp; Simons第一章,或Bruce的The Calculus of Variations, Appendix A.1.↩︎</p></li>
+<li id="fn2"><p>此处和下面均默认采用爱因斯坦求和约定.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>Physics</category>
+  <guid>https://yqwu.site/posts/Noether定理/Noether定理.html</guid>
+  <pubDate>Thu, 04 Mar 2021 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz26.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>直积,直和与张量积</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/直积,直和与张量积/直积,直和与张量积.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="直积直和与张量积" class="level1">
+<h1>直积,直和与张量积</h1>
+<p>最近发现很多教材, 尤其是物理类的教材中对于直积, 直和与张量积的定义存在矛盾与含糊之处, 在此进行一些区分.</p>
+<section id="定义与来源" class="level2">
+<h2 class="anchored" data-anchor-id="定义与来源">定义与来源</h2>
+<section id="直积" class="level3">
+<h3 class="anchored" data-anchor-id="直积">直积</h3>
+<p>直积(Direct Product)的定义与我们所熟知的笛卡尔积(Cartesian Product)相同, 用符号<img src="https://latex.codecogs.com/png.latex?%5Ctimes">标记</p>
+<blockquote class="blockquote">
+<p><img src="https://latex.codecogs.com/png.latex?X">与<img src="https://latex.codecogs.com/png.latex?Y">为两个集合, 他们的直积<img src="https://latex.codecogs.com/png.latex?X%5Ctimes%20Y">定义为一个集合, 其元素为X和<img src="https://latex.codecogs.com/png.latex?Y">中元素的<strong>有序对</strong>,即:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cforall%20x%5Cin%20X,%20y%5Cin%20Y,%20(x,y)%5Cin%20X%5Ctimes%20Y"></p>
+</blockquote>
+<p>可以看出直积有以下几个特点:</p>
+<ul>
+<li>是对于集合定义的.</li>
+<li>如果对于线性空间定义, 一个<img src="https://latex.codecogs.com/png.latex?n">维空间<img src="https://latex.codecogs.com/png.latex?X">和一个<img src="https://latex.codecogs.com/png.latex?m">维空间<img src="https://latex.codecogs.com/png.latex?Y">, 其直积空间<img src="https://latex.codecogs.com/png.latex?X%5Ctimes%20Y">的维数为<img src="https://latex.codecogs.com/png.latex?n+m">.</li>
+<li>实际上, 我们对于<img src="https://latex.codecogs.com/png.latex?X%5Ctimes%20Y">上的运算和结构没做<strong>任何规定</strong>.但一般我们总是让<img src="https://latex.codecogs.com/png.latex?x">和<img src="https://latex.codecogs.com/png.latex?y">分别继承之前的运算和结构,就像我们在直和中做的那样.</li>
+</ul>
+</section>
+<section id="直和" class="level3">
+<h3 class="anchored" data-anchor-id="直和">直和</h3>
+<p>直和(Direct Sum)用符号<img src="https://latex.codecogs.com/png.latex?%5Coplus">标记, 定义为</p>
+<blockquote class="blockquote">
+<p><img src="https://latex.codecogs.com/png.latex?V,W">为两定义在域<img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">上的<strong>矢量空间</strong>, 他们的直和<img src="https://latex.codecogs.com/png.latex?V%5Coplus%20W">定义为一个矢量空间, 其中的元素为<img src="https://latex.codecogs.com/png.latex?V">和<img src="https://latex.codecogs.com/png.latex?W">中元素的有序对, 并带有如下线性结构 <img src="https://latex.codecogs.com/png.latex?(x_1,%20y_1)%20+%20(x_2,%20y_2)%20=%20(x_1%20+%20x_2,%20y_1%20+%20y_2)"> <img src="https://latex.codecogs.com/png.latex?%5Calpha%20(x,y)%20=%20(%5Calpha%20x,%20%5Calpha%20y)"> 其中<img src="https://latex.codecogs.com/png.latex?x,x_1,x_2%20%5Cin%20V">, <img src="https://latex.codecogs.com/png.latex?y,y_1,%20y_2%20%5Cin%20W">, <img src="https://latex.codecogs.com/png.latex?%5Calpha%5Cin%5Cmathbb%7BF%7D">.</p>
+</blockquote>
+<p>可以看出直和有以下特点:</p>
+<ul>
+<li>定义在矢量空间上的.</li>
+<li><img src="https://latex.codecogs.com/png.latex?n">维矢量空间与<img src="https://latex.codecogs.com/png.latex?m">维矢量空间的直和空间维数为<img src="https://latex.codecogs.com/png.latex?n+m">.</li>
+<li>直和空间带有天然的带有运算和结构.</li>
+</ul>
+</section>
+<section id="张量积" class="level3">
+<h3 class="anchored" data-anchor-id="张量积">张量积</h3>
+<p>张量积(Tensor Product)的定义稍微显得复杂一点,同时注意, 我们使用<img src="https://latex.codecogs.com/png.latex?%5Cotimes">符号来同时标记对空间和张量的张量积, 为了不引起歧义, <img src="https://latex.codecogs.com/png.latex?A%5Cotimes%20B">这种大写字母指的是空间间的张量积, 而<img src="https://latex.codecogs.com/png.latex?a%5Cotimes%20b">指的是张量间的张量积. 我们先定义张量间的张量积</p>
+<blockquote class="blockquote">
+<p>对于两张量<img src="https://latex.codecogs.com/png.latex?a%5E%7B%5Cmu%7D%7B%7D_%7B%5Cnu%7D,%20b%5E%7B%5Crho%7D%7B%7D_%7B%5Csigma%7D">, 其张量积定义为<img src="https://latex.codecogs.com/png.latex?(a%5Cotimes%20b)%5E%7B%5Cmu%5Crho%7D%7B%7D_%7B%5Cnu%5Csigma%7D">. 写成矩阵形式: <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%0A&amp;a%5E%5Cmu%7B%7D_%5Cnu%20=%20%5Cbegin%7Bpmatrix%7Da%5E1%7B%7D_1&amp;%20a%5E1%7B%7D_2%5C%5C%20a%5E2%7B%7D_1&amp;%20a%5E2%7B%7D_2%5Cend%7Bpmatrix%7D%5C%5C%5C%5C%0A&amp;b%5E%5Crho%7B%7D_%5Csigma%20=%20%5Cbegin%7Bpmatrix%7Db%5E1%7B%7D_1&amp;%20b%5E1%7B%7D_2%5C%5C%20b%5E2%7B%7D_1&amp;%20b%5E2%7B%7D_2%5Cend%7Bpmatrix%7D%5C%5C%5C%5C%0A(a%5Cotimes%20b)%5E%7B%5Cmu%5Crho%7D%7B%7D_%7B%5Cnu%5Csigma%7D%20&amp;=%20%5Cbegin%7Bpmatrix%7Da%5E1%7B%7D_1%20b%5E%5Crho%7B%7D_%5Csigma&amp;%20a%5E1%7B%7D_2b%5E%5Crho%7B%7D_%5Csigma%5C%5C%20a%5E2%7B%7D_1b%5E%5Crho%7B%7D_%5Csigma&amp;%20a%5E2%7B%7D_2b%5E%5Crho%7B%7D_%5Csigma%5Cend%7Bpmatrix%7D%5C%5C%5C%5C%0A&amp;=%5Cbegin%7Bpmatrix%7Da%5E1%7B%7D_1%20b%5E1%7B%7D_1%20&amp;%20a%5E1%7B%7D_1%20b%5E1%7B%7D_2%20&amp;%20a%5E1%7B%7D_2%20b%5E1%7B%7D_1&amp;%20a%5E1%7B%7D_2%20b%5E1%7B%7D_2%5C%5C%20a%5E1%7B%7D_1b%5E2%7B%7D_1%20&amp;%20a%5E1%7B%7D_1b%5E2%7B%7D_2%20&amp;%20a%5E1%7B%7D_2%20b%5E2%7B%7D_1%20&amp;%20a%5E1%7B%7D_2%20b%5E2%7B%7D_2%5C%5C%20a%5E2%7B%7D_1a%5E1%7B%7D_1%20&amp;%20a%5E2%7B%7D_1b%5E1%7B%7D_2%20&amp;%20a%5E2%7B%7D_2%20b%5E1%7B%7D_1%20&amp;%20a%5E2%7B%7D_2%20b%5E1%7B%7D_2%5C%5C%20a%5E2%7B%7D_1a%5E2%7B%7D_1%20&amp;%20a%5E2%7B%7D_1b%5E2%7B%7D_2%20&amp;%20a%5E2%7B%7D_2%20b%5E2%7B%7D_1%20&amp;%20a%5E2%7B%7D_2%20b%5E2%7B%7D_2%5C%5C%20%5Cend%7Bpmatrix%7D%0A%5Cend%7Baligned%7D"> <img src="https://latex.codecogs.com/png.latex?V,W,U,X">为定义在域<img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">上的<strong>矢量空间</strong>. <img src="https://latex.codecogs.com/png.latex?p:V%5Ctimes%20W%5Cto%20X"> 为一个多线性映射, 则X为<img src="https://latex.codecogs.com/png.latex?V%5Cotimes%20W">, <img src="https://latex.codecogs.com/png.latex?p">为<img src="https://latex.codecogs.com/png.latex?v%5Cotimes%20w">,若对于<strong>任意</strong>多线性映射<img src="https://latex.codecogs.com/png.latex?A:V%5Ctimes%20W%5Cto%20U">, 有且仅有一个线性映射<img src="https://latex.codecogs.com/png.latex?A%5E%5Cotimes%20:X%5Cto%20U">, 使得<img src="https://latex.codecogs.com/png.latex?A=A%5E%5Cotimes%20%5Ccirc%20p"></p>
+</blockquote>
+<p>张量积的性质:</p>
+<ul>
+<li>定义在矢量空间上,元素是张量(多线性映射).</li>
+<li><img src="https://latex.codecogs.com/png.latex?n">维矢量空间与<img src="https://latex.codecogs.com/png.latex?m">维矢量空间的张量积空间维数为<img src="https://latex.codecogs.com/png.latex?nm">.</li>
+<li>张量积空间天然带有多线性结构.</li>
+</ul>
+</section>
+</section>
+<section id="区别" class="level2">
+<h2 class="anchored" data-anchor-id="区别">区别</h2>
+<section id="直和与直积" class="level3">
+<h3 class="anchored" data-anchor-id="直和与直积">直和与直积</h3>
+<p>直和与直积几乎没有什么区别, 仅有的两个区别在于:</p>
+<ul>
+<li>默认情况下, 直积可以对任何集合定义, 并且直积空间不附带任何结构. 但直和空间是对于两个矢量空间定义的, 自然带有线性结构.</li>
+<li>对于无限维空间, 直和空间的元素只能有有限个非零分量, 而直积空间的元素可以有任意个非零分量, i.e.&nbsp;直和空间是直积空间的真子空间. (这是是一个定义, 不用问为什么).</li>
+</ul>
+</section>
+<section id="直和直积与张量积" class="level3">
+<h3 class="anchored" data-anchor-id="直和直积与张量积">直和/直积与张量积</h3>
+<p>二者非常不一样, 主要来源于张量积空间保持了多线性结构. 举了例子来说明两者的区别. 考虑一个<img src="https://latex.codecogs.com/png.latex?2">维矢量空间<img src="https://latex.codecogs.com/png.latex?A">和一个<img src="https://latex.codecogs.com/png.latex?1">维矢量空间<img src="https://latex.codecogs.com/png.latex?B">, 其基底分别为<img src="https://latex.codecogs.com/png.latex?%5C%7Ba_1,a_2%5C%7D">和<img src="https://latex.codecogs.com/png.latex?%5C%7Bb_1%5C%7D">.其的直和空间<img src="https://latex.codecogs.com/png.latex?A%5Coplus%20B">中任意元素: <img src="https://latex.codecogs.com/png.latex?%0A(a%5Ccdot%20a_1,b%5Ccdot%20a_2,c%5Ccdot%20b_1)%0A"> 总可以将其分解为: <img src="https://latex.codecogs.com/png.latex?%0Aa(a_1,0,0)%20+%20b(0,a_2,0)%20+%20c(0,0,b_1)%0A"> 可见, 直和空间是三维的, 再考虑其张量积空间<img src="https://latex.codecogs.com/png.latex?A%5Cotimes%20B">中的任意元素 <img src="https://latex.codecogs.com/png.latex?%0A(a%5Ccdot%20a_1,%20b%5Ccdot%20a_2)%5Cotimes(c%5Ccdot%20b_1)%0A"> 可以写成: <img src="https://latex.codecogs.com/png.latex?%0Aac%20%5Ccdot%20a_1%5Cotimes%20b_1%20+%20bc%20%5Ccdot%20a_2%5Cotimes%20b_1%0A"> 可以看出张量积空间是<img src="https://latex.codecogs.com/png.latex?2%5Ctimes%201%20=%202">维的.</p>
+<p>其间的主要差异是由多线性结构引起的. 因为直和/直积空间只是将两个空间的元素按顺序放在一起,因此维数是两空间相加. 而张量积空间中, 由于多线性性, 我们有: <img src="https://latex.codecogs.com/png.latex?%0A(a+b)%5Cotimes%20(c+d)%20=%20a%5Cotimes%20c%20+%20b%5Cotimes%20c%20+%20a%5Cotimes%20d%20+%20b%5Cotimes%20d%0A"> 因此维数是相乘.</p>
+</section>
+</section>
+<section id="总结" class="level2">
+<h2 class="anchored" data-anchor-id="总结">总结</h2>
+<p>很多物理书中总喜欢将张量积和直积混淆, 我看到的最严重的就是喀兴林先生的《高等量子力学》一书, 甚至还在书中专门花了一节来讨论直和与直积空间的区别. 以后我要注意区分.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Maths</category>
+  <category>Physics</category>
+  <guid>https://yqwu.site/posts/直积,直和与张量积/直积,直和与张量积.html</guid>
+  <pubDate>Wed, 14 Oct 2020 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/i/hz27.jpg" medium="image" type="image/jpeg"/>
+</item>
+</channel>
+</rss>
