@@ -2,12 +2,16 @@ project:
   type: website
 
 website:
-  title: "blogs"
+  title: "Yuanqing Wu's Blog"
+  site-url: https://yqwu.site
+  description: "Personal blog of Yuanqing Wu"
   navbar:
     right:
       - about.qmd
       - icon: github
         href: https://github.com/yqwu905
+      - icon: rss
+        href: index.xml
       # - icon: twitter
       #   href: https://twitter.com
 format:
