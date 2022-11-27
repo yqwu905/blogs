@@ -6,7 +6,7 @@ date: "11/14/2022"
 format:
   html:
     code-fold: true
-image: https://image.yqwu.site/i/102852101_p0.png
+image: https://image.yqwu.site/102852101_p0.png
 jupyter: julia-1.8
 ---
 

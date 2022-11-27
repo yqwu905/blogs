@@ -7,7 +7,7 @@ mathjax: true
 categories:
   - Physics
 date: 09/21/2021
-image: https://image.yqwu.site/i/hz28.jpg
+image: https://image.yqwu.site/hz28.jpg
 ---
 
 # 黑体辐射

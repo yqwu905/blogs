@@ -1,0 +1,55 @@
+---
+title: Wigner定理
+description: 这里, 我们讲讨论一些关于Hilbert空间的问题, 并进一步介绍Wigner定理.
+author: Yuanqing Wu
+date: 11/19/2022
+---
+在我们开始谈论时间反演之前, 我们讨论更多关于量子力学对称性的问题.
+
+我们首先回顾量子力学的基本原理, 我们认为, 任何量子态对应于Hilbert空间中的一个
+矢量, *同时他们在乘以一个复系数的情况下仍代表相同的态*, 即$c \ket{a}$ 和
+$\ket{a}$ 是一个态, 这样, 一个态实际上对应于Hilbert空间中态矢量张成的一个一维
+空间, 或者说一条**射线**. 这使得我们有动机引入等价关系:
+
+$$\ket{s_1} \sim \ket{s_2} \Leftrightarrow \exists c \in \mathbb{C}, \ket{s_1} = c \ket{s_2}$$
+
+进一步的, 我们可以得到商空间, 也就是射影空间$\mathbb{P} \mathcal{H}$:
+
+::: {.column-margin}
+不难看出, 射影空间 $\mathbb{P} \mathcal{H}$ 不是矢量空间, 而是因为 我们把
+$0$ 元素移出了.
+:::
+
+$$\mathbb{P} \mathcal{H} = \mathcal{H} - \{0\} / \sim$$
+
+我们将矢量 $\ket{s}$ 属于的射线记作$\ket{\overline{s}}$, 射线间的内积定义为
+两射线内任意归一化矢量的内积.
+
+那么我们首先定义对称变换为:
+
+::: {#def-symmtery-transform}
+## 对称变换
+
+给定Hilbert空间$\mathcal{H}$ 及相应的射影空间$\mathbb{P} \mathcal{H}$, 若有映射
+$f: \mathbb{P}\mathcal{H} \to \mathbb{P} \mathcal{H}$ 满足:
+
+$$ |\braket{\overline{s_1}|\overline{s_2}}|^{2} = |\braket{f(\overline{s_1})|f(\overline{s_2})}|^{2},\quad \forall s_1,s_2\in \mathbb{P} \mathcal{H} $$
+
+则称$f$ 是一个**对称变换**
+:::
+
+此处我们定义的对称变换是射影空间$\mathbb{P} \mathcal{H}$ 上的映射, 我们希望能与
+Hilbert空间上的映射建立联系, 由$\mathcal{H}-\{0\}$ 到 $\mathbb{P} \mathcal{H}$ 
+的自然同态, 我们不难定义:
+
+::: {#def-compatible}
+## 相容
+给定Hilbert空间$\mathcal{H}_1, \mathcal{H}_{2}$与相应的射影空间
+$\mathbb{P} \mathcal{H}_{1}, \mathbb{P}\mathcal{H}_{2}$,
+设分别有映射 $G: \mathcal{H}_{1} \to \mathcal{H}_{2}$, $f: \mathbb{P} \mathcal{H}_{1} \to
+\mathbb{P} \mathcal{H}_{2}$, 若满足:
+
+$$ G(\ket{s}) \in f(\ket{\overline{s}}),\quad \forall \ket{s}\in \mathcal{H}_{1}$$
+
+则称$G$ 和$f$ 是相容的.
+:::

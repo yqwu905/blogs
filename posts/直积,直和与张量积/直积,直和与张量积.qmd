@@ -8,7 +8,7 @@ categories:
   - Maths
   - Physics
 date: 10/14/2020
-image: https://image.yqwu.site/i/hz27.jpg
+image: https://image.yqwu.site/hz27.jpg
 ---
 # 直积,直和与张量积
 

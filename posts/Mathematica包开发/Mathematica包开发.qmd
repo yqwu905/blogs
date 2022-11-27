@@ -6,7 +6,7 @@ tags: ['Computer Science']
 categories:
   - Computer Science
 date: "01/04/2022"
-image: https://image.yqwu.site/i/hz15.png
+image: https://image.yqwu.site/hz15.png
 ---
 # Mathematica包开发(一)
 最近需要写一个Mathematica的Package, 但网上教程并不多,

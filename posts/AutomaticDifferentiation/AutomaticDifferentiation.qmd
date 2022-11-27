@@ -3,7 +3,7 @@ title: "自动微分(Automatic Differentiation)"
 description: "求任意函数的微分是数值方法中很重要的一个内容, 不同于计算物理中常用的简单数值微分, 这里我们介绍在ML等领域中常用的另一种微分方式: 自动微分"
 author: "Yuanqing Wu"
 date: "08/26/2021"
-image: https://image.yqwu.site/i/hz27.jpg
+image: https://image.yqwu.site/hz27.jpg
 jupyter: julia-1.8
 ---
 
@@ -36,7 +36,7 @@ $$ f'(x) = \lim_{\epsilon \to 0} \frac{f(x+\epsilon) - f(x)}{\epsilon}$$
 考虑函数:
 $$ f(x_1, x_2) = \ln (x_1) + x_1 x_2 -\sin(x_2) $$
 可以将其转化为如下的AST形式
-![2021-08-17-01-20-17](https://image.yqwu.site/i/2021-08-17-01-20-17.png)
+![2021-08-17-01-20-17](https://image.yqwu.site/2021-08-17-01-20-17.png)
 各节点分别为:
 * $v_{-1}$ :$x_1$ 
 * $v_0$ :$x_2$
@@ -46,7 +46,7 @@ $$ f(x_1, x_2) = \ln (x_1) + x_1 x_2 -\sin(x_2) $$
 * $v_4$ :$v_1 + v_2$
 * $v_5$ :$v_4+v_3$  
 之后, 就可以很轻松的求解函数在各步的函数值与导数值, 如下表所示.
-![2021-08-17-01-20-57](https://image.yqwu.site/i/2021-08-17-01-20-57.png)
+![2021-08-17-01-20-57](https://image.yqwu.site/2021-08-17-01-20-57.png)
 实现前向自动微分最简单的方法就是*Dual Number*法. 其核心思想是用$x+\epsilon$替换 $x$作为输入, 利用Taylor展开:
  $$ f(x+b \epsilon) = f(x) + f'(x)b \epsilon $$
  例如, 我们需要求解$\frac{\partial f}{\partial x_1}$, 则将$v_{-1}$ 从$x_1$改为$x_1 + \epsilon$. 之后, 我们需要实现各种基本函数下$\epsilon$ 的作用率, 例如:

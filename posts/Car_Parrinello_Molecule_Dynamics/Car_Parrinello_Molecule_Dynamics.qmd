@@ -7,7 +7,7 @@ mathjax: true
 categories:
   - Physics
 date: "10/29/2021"
-image: https://image.yqwu.site/i/hz24.jpg
+image: https://image.yqwu.site/hz24.jpg
 ---
 
 # Car-Parrinello 分子动力学

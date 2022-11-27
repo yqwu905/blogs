@@ -4,7 +4,7 @@ author: "Yuanqing Wu"
 description: "记录一下用LaTeX撰写毕业论文时的一些想法和经验."
 tags: ['LaTeX']
 date: "03/04/2022"
-image: https://image.yqwu.site/i/hz25.jpg
+image: https://image.yqwu.site/hz25.jpg
 ---
 
 # 毕业论文写作有感
