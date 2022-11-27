@@ -10,7 +10,44 @@
 <atom:link href="https://yqwu.site/index.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog of Yuanqing Wu</description>
 <generator>quarto-1.2.269</generator>
-<lastBuildDate>Mon, 14 Nov 2022 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 19 Nov 2022 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Wigner定理</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/Wigner定理/Wigner定理.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>在我们开始谈论时间反演之前, 我们讨论更多关于量子力学对称性的问题.</p>
+<p>我们首先回顾量子力学的基本原理, 我们认为, 任何量子态对应于Hilbert空间中的一个 矢量, <em>同时他们在乘以一个复系数的情况下仍代表相同的态</em>, 即<img src="https://latex.codecogs.com/png.latex?c%20%5Cket%7Ba%7D"> 和 <img src="https://latex.codecogs.com/png.latex?%5Cket%7Ba%7D"> 是一个态, 这样, 一个态实际上对应于Hilbert空间中态矢量张成的一个一维 空间, 或者说一条<strong>射线</strong>. 这使得我们有动机引入等价关系:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cket%7Bs_1%7D%20%5Csim%20%5Cket%7Bs_2%7D%20%5CLeftrightarrow%20%5Cexists%20c%20%5Cin%20%5Cmathbb%7BC%7D,%20%5Cket%7Bs_1%7D%20=%20c%20%5Cket%7Bs_2%7D"></p>
+<p>进一步的, 我们可以得到商空间, 也就是射影空间<img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D">:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>不难看出, 射影空间 <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D"> 不是矢量空间, 而是因为 我们把 <img src="https://latex.codecogs.com/png.latex?0"> 元素移出了.</p>
+</div></div><p><img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D%20=%20%5Cmathcal%7BH%7D%20-%20%5C%7B0%5C%7D%20/%20%5Csim"></p>
+<p>我们将矢量 <img src="https://latex.codecogs.com/png.latex?%5Cket%7Bs%7D"> 属于的射线记作<img src="https://latex.codecogs.com/png.latex?%5Cket%7B%5Coverline%7Bs%7D%7D">, 射线间的内积定义为 两射线内任意归一化矢量的内积.</p>
+<p>那么我们首先定义对称变换为:</p>
+<div id="def-symmtery-transform" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 (对称变换) </strong></span>给定Hilbert空间<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BH%7D"> 及相应的射影空间<img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D">, 若有映射 <img src="https://latex.codecogs.com/png.latex?f:%20%5Cmathbb%7BP%7D%5Cmathcal%7BH%7D%20%5Cto%20%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D"> 满足:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20%7C%5Cbraket%7B%5Coverline%7Bs_1%7D%7C%5Coverline%7Bs_2%7D%7D%7C%5E%7B2%7D%20=%20%7C%5Cbraket%7Bf(%5Coverline%7Bs_1%7D)%7Cf(%5Coverline%7Bs_2%7D)%7D%7C%5E%7B2%7D,%5Cquad%20%5Cforall%20s_1,s_2%5Cin%20%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D%20"></p>
+<p>则称<img src="https://latex.codecogs.com/png.latex?f"> 是一个<strong>对称变换</strong></p>
+</div>
+<p>此处我们定义的对称变换是射影空间<img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D"> 上的映射, 我们希望能与 Hilbert空间上的映射建立联系, 由<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BH%7D-%5C%7B0%5C%7D"> 到 <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D"> 的自然同态, 我们不难定义:</p>
+<div id="def-compatible" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 (相容) </strong></span>给定Hilbert空间<img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BH%7D_1,%20%5Cmathcal%7BH%7D_%7B2%7D">与相应的射影空间 <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D_%7B1%7D,%20%5Cmathbb%7BP%7D%5Cmathcal%7BH%7D_%7B2%7D">, 设分别有映射 <img src="https://latex.codecogs.com/png.latex?G:%20%5Cmathcal%7BH%7D_%7B1%7D%20%5Cto%20%5Cmathcal%7BH%7D_%7B2%7D">, <img src="https://latex.codecogs.com/png.latex?f:%20%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D_%7B1%7D%20%5Cto%20%5Cmathbb%7BP%7D%20%5Cmathcal%7BH%7D_%7B2%7D">, 若满足:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%20G(%5Cket%7Bs%7D)%20%5Cin%20f(%5Cket%7B%5Coverline%7Bs%7D%7D),%5Cquad%20%5Cforall%20%5Cket%7Bs%7D%5Cin%20%5Cmathcal%7BH%7D_%7B1%7D"></p>
+<p>则称<img src="https://latex.codecogs.com/png.latex?G"> 和<img src="https://latex.codecogs.com/png.latex?f"> 是相容的.</p>
+</div>
+
+
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/Wigner定理/Wigner定理.html</guid>
+  <pubDate>Sat, 19 Nov 2022 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>双阱势问题</title>
   <dc:creator>Yuanqing Wu</dc:creator>
@@ -83,7 +120,7 @@
  ]]></description>
   <guid>https://yqwu.site/posts/Double_Well_Potential/index.html</guid>
   <pubDate>Mon, 14 Nov 2022 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/102852101_p0.png" medium="image" type="image/png"/>
+  <media:content url="https://image.yqwu.site/102852101_p0.png" medium="image" type="image/png"/>
 </item>
 <item>
   <title>网站迁移记录</title>
@@ -176,7 +213,7 @@ server {
  ]]></description>
   <guid>https://yqwu.site/posts/BlogMigrate/BlogMigrate.html</guid>
   <pubDate>Wed, 09 Mar 2022 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz23.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz23.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>毕业论文写作有感</title>
@@ -253,7 +290,7 @@ $out_dir = '.latexmk_build';</code></pre>
  ]]></description>
   <guid>https://yqwu.site/posts/LatexThesisTips/LatexThesisTips.html</guid>
   <pubDate>Fri, 04 Mar 2022 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz25.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz25.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Mathematica包开发(一)</title>
@@ -472,7 +509,7 @@ Out[2]= 5</code></pre>
   <category>Computer Science</category>
   <guid>https://yqwu.site/posts/Mathematica包开发/Mathematica包开发.html</guid>
   <pubDate>Tue, 04 Jan 2022 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz15.png" medium="image" type="image/png"/>
+  <media:content url="https://image.yqwu.site/hz15.png" medium="image" type="image/png"/>
 </item>
 <item>
   <title>Car-Parrinello 分子动力学</title>
@@ -567,7 +604,7 @@ Out[2]= 5</code></pre>
   <category>Physics</category>
   <guid>https://yqwu.site/posts/Car_Parrinello_Molecule_Dynamics/Car_Parrinello_Molecule_Dynamics.html</guid>
   <pubDate>Fri, 29 Oct 2021 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz24.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz24.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>黑体辐射</title>
@@ -634,7 +671,7 @@ Out[2]= 5</code></pre>
   <category>Physics</category>
   <guid>https://yqwu.site/posts/黑体辐射/黑体辐射.html</guid>
   <pubDate>Tue, 21 Sep 2021 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz28.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz28.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>自动微分(Automatic Differentiation)</title>
@@ -668,8 +705,8 @@ Out[2]= 5</code></pre>
 <section id="自动微分-forward-mode" class="level2">
 <h2 class="anchored" data-anchor-id="自动微分-forward-mode">自动微分-Forward Mode</h2>
 <p>我们从一个例子开始讲解前向的自动微分算法.<br>
-考虑函数: <img src="https://latex.codecogs.com/png.latex?%20f(x_1,%20x_2)%20=%20%5Cln%20(x_1)%20+%20x_1%20x_2%20-%5Csin(x_2)%20"> 可以将其转化为如下的AST形式 <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/i/2021-08-17-01-20-17.png" class="img-fluid" alt="2021-08-17-01-20-17"> 各节点分别为: * <img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> :<img src="https://latex.codecogs.com/png.latex?x_1"> * <img src="https://latex.codecogs.com/png.latex?v_0"> :<img src="https://latex.codecogs.com/png.latex?x_2"> * <img src="https://latex.codecogs.com/png.latex?v_1"> :<img src="https://latex.codecogs.com/png.latex?%5Cln%20v_%7B-1%7D"> * <img src="https://latex.codecogs.com/png.latex?v_2"> :<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D%5Ctimes%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_3"> :<img src="https://latex.codecogs.com/png.latex?%5Csin%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_4"> :<img src="https://latex.codecogs.com/png.latex?v_1%20+%20v_2"> * <img src="https://latex.codecogs.com/png.latex?v_5"> :<img src="https://latex.codecogs.com/png.latex?v_4+v_3"><br>
-之后, 就可以很轻松的求解函数在各步的函数值与导数值, 如下表所示. <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/i/2021-08-17-01-20-57.png" class="img-fluid" alt="2021-08-17-01-20-57"> 实现前向自动微分最简单的方法就是<em>Dual Number</em>法. 其核心思想是用<img src="https://latex.codecogs.com/png.latex?x+%5Cepsilon">替换 <img src="https://latex.codecogs.com/png.latex?x">作为输入, 利用Taylor展开: <img src="https://latex.codecogs.com/png.latex?%20f(x+b%20%5Cepsilon)%20=%20f(x)%20+%20f'(x)b%20%5Cepsilon%20"> 例如, 我们需要求解<img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20f%7D%7B%5Cpartial%20x_1%7D">, 则将<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> 从<img src="https://latex.codecogs.com/png.latex?x_1">改为<img src="https://latex.codecogs.com/png.latex?x_1%20+%20%5Cepsilon">. 之后, 我们需要实现各种基本函数下<img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> 的作用率, 例如: * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%20+%20(c+%20d%20%5Cepsilon)%20=%20(a+c)%20+%20(b+d)%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%5Ctimes%20(c+d%20%5Cepsilon)%20=%20ac%20+%20(bc+%20ad)%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Cln%20(a+b%20%5Cepsilon)%20=%20%5Cln%20a%20+%20%5Cfrac%7Bb%7D%7Ba%7D%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Csin%20(a+b%20%5Cepsilon)%20=%20%5Csin(a)+%20%5Ccos%20(a)%20b%20%5Cepsilon"><br>
+考虑函数: <img src="https://latex.codecogs.com/png.latex?%20f(x_1,%20x_2)%20=%20%5Cln%20(x_1)%20+%20x_1%20x_2%20-%5Csin(x_2)%20"> 可以将其转化为如下的AST形式 <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/2021-08-17-01-20-17.png" class="img-fluid" alt="2021-08-17-01-20-17"> 各节点分别为: * <img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> :<img src="https://latex.codecogs.com/png.latex?x_1"> * <img src="https://latex.codecogs.com/png.latex?v_0"> :<img src="https://latex.codecogs.com/png.latex?x_2"> * <img src="https://latex.codecogs.com/png.latex?v_1"> :<img src="https://latex.codecogs.com/png.latex?%5Cln%20v_%7B-1%7D"> * <img src="https://latex.codecogs.com/png.latex?v_2"> :<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D%5Ctimes%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_3"> :<img src="https://latex.codecogs.com/png.latex?%5Csin%20v_0"> * <img src="https://latex.codecogs.com/png.latex?v_4"> :<img src="https://latex.codecogs.com/png.latex?v_1%20+%20v_2"> * <img src="https://latex.codecogs.com/png.latex?v_5"> :<img src="https://latex.codecogs.com/png.latex?v_4+v_3"><br>
+之后, 就可以很轻松的求解函数在各步的函数值与导数值, 如下表所示. <img src="https://yqwu.site/posts/AutomaticDifferentiation/https:/image.yqwu.site/2021-08-17-01-20-57.png" class="img-fluid" alt="2021-08-17-01-20-57"> 实现前向自动微分最简单的方法就是<em>Dual Number</em>法. 其核心思想是用<img src="https://latex.codecogs.com/png.latex?x+%5Cepsilon">替换 <img src="https://latex.codecogs.com/png.latex?x">作为输入, 利用Taylor展开: <img src="https://latex.codecogs.com/png.latex?%20f(x+b%20%5Cepsilon)%20=%20f(x)%20+%20f'(x)b%20%5Cepsilon%20"> 例如, 我们需要求解<img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20f%7D%7B%5Cpartial%20x_1%7D">, 则将<img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D"> 从<img src="https://latex.codecogs.com/png.latex?x_1">改为<img src="https://latex.codecogs.com/png.latex?x_1%20+%20%5Cepsilon">. 之后, 我们需要实现各种基本函数下<img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> 的作用率, 例如: * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%20+%20(c+%20d%20%5Cepsilon)%20=%20(a+c)%20+%20(b+d)%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?(a+b%20%5Cepsilon)%5Ctimes%20(c+d%20%5Cepsilon)%20=%20ac%20+%20(bc+%20ad)%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Cln%20(a+b%20%5Cepsilon)%20=%20%5Cln%20a%20+%20%5Cfrac%7Bb%7D%7Ba%7D%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?%5Csin%20(a+b%20%5Cepsilon)%20=%20%5Csin(a)+%20%5Ccos%20(a)%20b%20%5Cepsilon"><br>
 之后, 依次计算各个节点: * <img src="https://latex.codecogs.com/png.latex?v_%7B-1%7D%20=%202%20+%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_0%20=%205"> * <img src="https://latex.codecogs.com/png.latex?v_1%20=%20%5Cln%202%20+%20%5Cfrac%7B%5Cepsilon%7D%7B2%7D"> * <img src="https://latex.codecogs.com/png.latex?v_2%20=%2010%20+%205%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_3%20=%20%5Csin%205"> * <img src="https://latex.codecogs.com/png.latex?v_4%20=%2010%20+%20%5Cln%202%20+%20%5Cfrac%7B11%20%5Cepsilon%7D%7B2%7D%20%5Capprox%2010.693%20+%205.5%20%5Cepsilon"> * <img src="https://latex.codecogs.com/png.latex?v_5%20=%2010.693%20+%20%5Csin%205%20+%205.5%20%5Cepsilon%20%5Capprox%2011.652%20+%205.5%20%5Cepsilon"></p>
 <p>由此, 我们得到了在<img src="https://latex.codecogs.com/png.latex?(x_1=2,%20x_2=5)">处, 函数值为<img src="https://latex.codecogs.com/png.latex?10.693">, 对<img src="https://latex.codecogs.com/png.latex?x_1">的导数值为<img src="https://latex.codecogs.com/png.latex?5.5">.<br>
 代码上的实现也是很简单的, 我们只要构造Dual Number类型:</p>
@@ -877,7 +914,7 @@ Out[2]= 5</code></pre>
  ]]></description>
   <guid>https://yqwu.site/posts/AutomaticDifferentiation/AutomaticDifferentiation.html</guid>
   <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz27.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz27.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>2021年上半年ACG杂谈</title>
@@ -957,7 +994,7 @@ B站评论沾点饭圈, 另外特别篇也是有够烂的.(这两点不参与评
 <p>没怎么看, 就日常看海贼,然后看了巨人. 海贼没啥好说的, 能早日完结我就心满意足了, 巨人也没啥好说的, jscnmsl.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://yqwu.site/posts/2021上杂谈/https:/image.yqwu.site/i/5ef8b977e7756f24d84bbb82794f4695ee6bfe280b4eb1110ec73ed7d1ee3ebc.jpg" class="img-fluid figure-img"></p>
+<p><img src="https://yqwu.site/posts/2021上杂谈/https:/image.yqwu.site/5ef8b977e7756f24d84bbb82794f4695ee6bfe280b4eb1110ec73ed7d1ee3ebc.jpg" class="img-fluid figure-img"></p>
 <p></p><figcaption class="figure-caption">meme</figcaption><p></p>
 </figure>
 </div>
@@ -983,7 +1020,7 @@ B站评论沾点饭圈, 另外特别篇也是有够烂的.(这两点不参与评
  ]]></description>
   <guid>https://yqwu.site/posts/2021上杂谈/2021上杂谈.html</guid>
   <pubDate>Mon, 26 Jul 2021 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz29.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz29.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Noether定理</title>
@@ -1101,7 +1138,7 @@ B站评论沾点饭圈, 另外特别篇也是有够烂的.(这两点不参与评
   <category>Physics</category>
   <guid>https://yqwu.site/posts/Noether定理/Noether定理.html</guid>
   <pubDate>Thu, 04 Mar 2021 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz26.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz26.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>直积,直和与张量积</title>
@@ -1187,7 +1224,7 @@ B站评论沾点饭圈, 另外特别篇也是有够烂的.(这两点不参与评
   <category>Physics</category>
   <guid>https://yqwu.site/posts/直积,直和与张量积/直积,直和与张量积.html</guid>
   <pubDate>Wed, 14 Oct 2020 00:00:00 GMT</pubDate>
-  <media:content url="https://image.yqwu.site/i/hz27.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://image.yqwu.site/hz27.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

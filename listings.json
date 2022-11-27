@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Wigner定理/Wigner定理.html",
       "/posts/Double_Well_Potential/index.html",
       "/posts/BlogMigrate/BlogMigrate.html",
       "/posts/LatexThesisTips/LatexThesisTips.html",
