@@ -10,7 +10,70 @@
 <atom:link href="https://yqwu.site/index.xml" rel="self" type="application/rss+xml"/>
 <description>Personal blog of Yuanqing Wu</description>
 <generator>quarto-1.2.269</generator>
-<lastBuildDate>Sat, 19 Nov 2022 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 01 Dec 2022 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>新-网站迁移记录</title>
+  <dc:creator>Yuanqing Wu</dc:creator>
+  <link>https://yqwu.site/posts/BlogMigrate2022/BlogMigrate2022.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>在上一次<a href="../../posts/BlogMigrate/BlogMigrate.html">网站迁移</a>后, 网站遇到了一系列问题:</p>
+<p>首先是非80/443端口的流量导致IP被GFW封了两次, 我的VPS服务商还不提供更换IP的服务, 只能换一个机子然后迁移数据, 很麻烦; 解决这个也不难, 只将80端口用于VPN服务, 其他的功能都只暴露在本地端口, 通过VPN访问, 但是这并不适用于博客, 毕竟博客的初衷就是大家都能看到(虽然也没人看就是了).</p>
+<p>第二个就是自己写的博客框架过于简陋了点, 导致写起来很不爽, 最近又发现了<a href="https://quarto.org/">Quarto</a>这个好东西, 于是决定迁移到Quarto上来, 刚好Quarto也支持博客功能.</p>
+<section id="服务商选择" class="level2">
+<h2 class="anchored" data-anchor-id="服务商选择">服务商选择</h2>
+<p>部署博客网站的服务商有很多选择, 综合价格(或者说白嫖额度)和国内访问速度来看, Cloudflare是比较好的选择, 因此选择部署在Cloudflare Page上.</p>
+<p>图床也顺便从自己的服务器上迁移了出来, 也用的是Cloudflare的服务, 虽然Cloudflare的Image服务要收费, 但是R2储存功能有10G的免费额度, 同时免费流量(准确的说Cloudflare不按流量收费, 而是所谓的操作次数,也就是访问次数)也不像七牛云那样只支持HTTP.</p>
+</section>
+<section id="技术细节" class="level2">
+<h2 class="anchored" data-anchor-id="技术细节">技术细节</h2>
+<section id="博客部署" class="level3">
+<h3 class="anchored" data-anchor-id="博客部署">博客部署</h3>
+<p>这套方案最大的问题就是Cloudflare Page不像Github Page那样有Github Action的支持, 同时也不原生支持Quarto框架, 这导致部署环境并编译到静态网页很麻烦. 因此选择使用Github Action, 先部署到Github Page, 然后Cloudflare Page的储存库指向Github Page分支即可, 构建设置全部留空即可 <img src="https://yqwu.site/posts/BlogMigrate2022/https:/image.yqwu.site/2022-12-01_20-12.png" class="img-fluid" alt="Cloudflare Page设置示例"></p>
+<p>Github Action方面, 参考Quarto官方提供的<a href="https://github.com/quarto-dev/quarto-actions">示例仓库</a>, 同时由于我主要使用的是Julia, 需要手动配置一下环境, 这样才能正确渲染出代码输出(你也可以选择不在云端重新计算, 直接使用本地计算结果), 流程如下:</p>
+<pre class="{toml}"><code>      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install jupyter
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: 1.8
+      - run: julia -e 'using Pkg;deps=readlines("requirements.txt");for dep in deps Pkg.add(dep) end'
+      - name: Publish to GitHub Pages (and render)
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}</code></pre>
+<p>值得注意的点是, 由于Julia目前对虚拟环境的支持没有Python那么好, 因此我选择手动将所有需要的库写入<code>requirements.txt</code>中, 然后依次安装.</p>
+</section>
+<section id="https" class="level3">
+<h3 class="anchored" data-anchor-id="https">HTTPS</h3>
+<p>Cloudflare为网站开启HTTPS后, Cloudflare会自动为你注册并续签一个<a href="https://letsencrypt.org/">Let’s Encrypt</a>的免费证书.</p>
+<blockquote class="blockquote">
+<p>P.S. 如果你需要开启HTTPS的不是Cloudflare Page这类的第三方托管的服务, 而是来自你的服务器的内容, Cloudflare为你提供了自签名的为期10年的SSL证书, 你只需要在服务器上部署这个证书, 就能实现服务器到Cloudflare之间的加密, 而用户端到Cloudflare间的加密仍由Cloudflare注册并自动续签的证书负责.</p>
+</blockquote>
+</section>
+<section id="quarto设置" class="level3">
+<h3 class="anchored" data-anchor-id="quarto设置">Quarto设置</h3>
+<p>关于用Quarto来创作, 官方提供了很详细的<a href="https://quarto.org/docs/guide/">文档</a>, 同时,Albert Rapp也撰写了一篇很好的<a href="https://albert-rapp.de/posts/13_quarto_blog_writing_guide/13_quarto_blog_writing_guide.html">文章</a>, 详细的介绍了利用Quarto进行博客创作的各种细节与流程.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <guid>https://yqwu.site/posts/BlogMigrate2022/BlogMigrate2022.html</guid>
+  <pubDate>Thu, 01 Dec 2022 00:00:00 GMT</pubDate>
+  <media:content url="https://image.yqwu.site/hz23.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Wigner定理</title>
   <dc:creator>Yuanqing Wu</dc:creator>

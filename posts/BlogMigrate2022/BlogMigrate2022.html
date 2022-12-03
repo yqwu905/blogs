@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Yuanqing Wu">
-<meta name="dcterms.date" content="2022-03-09">
-<meta name="description" content="记录一下迁移网站的过程, 以作备忘之需.">
+<meta name="dcterms.date" content="2022-12-01">
+<meta name="description" content="最近服务器被连着封了两次IP, 不堪其扰, 决定将部分功能迁移到Cloudflare等公共服务商上.">
 
-<title>Yuanqing Wu’s Blog - 网站迁移记录</title>
+<title>Yuanqing Wu’s Blog - 新-网站迁移记录</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -112,10 +112,10 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">网站迁移记录</h1>
+      <h1 class="title">新-网站迁移记录</h1>
                   <div>
         <div class="description">
-          记录一下迁移网站的过程, 以作备忘之需.
+          最近服务器被连着封了两次IP, 不堪其扰, 决定将部分功能迁移到Cloudflare等公共服务商上.
         </div>
       </div>
                 </div>
@@ -134,7 +134,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 9, 2022</p>
+        <p class="date">December 1, 2022</p>
       </div>
     </div>
     
@@ -152,80 +152,50 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="网站迁移记录" class="level1">
-<h1>网站迁移记录</h1>
-<p>由于之前技术力过于低下, 导致之前网站很多地方设置冲突且难以修复, 并且博客加载速度堪忧. 因此干脆直接服务器重装, 然后进行网站迁移. 为了方便日后查询, 记录一下迁移过程.</p>
-<section id="系统和环境配置" class="level2">
-<h2 class="anchored" data-anchor-id="系统和环境配置">系统和环境配置</h2>
-<p>之前的LAMP环境我用的是宝塔一键配置的, 但是宝塔面板这个东西用久了在我的破烂机器上总是容易有一些奇怪的问题. 因此这次重装我就直接 放弃了宝塔面板, 自己手动安装.<br>
-系统选用的是<strong>Ubuntu 18.04.1 LTS</strong>, 问就是够用就行(话说真的会有人在服务器上装Arch吗).<br>
-网站服务这边我直接放弃了PHP和MYSQL, 第一是没有数据库和动态页面的硬需求, 第二是自己对这两个都不熟悉, 因此只装个Nginx提供网页服务.</p>
+<p>在上一次<a href="../../posts/BlogMigrate/BlogMigrate.html">网站迁移</a>后, 网站遇到了一系列问题:</p>
+<p>首先是非80/443端口的流量导致IP被GFW封了两次, 我的VPS服务商还不提供更换IP的服务, 只能换一个机子然后迁移数据, 很麻烦; 解决这个也不难, 只将80端口用于VPN服务, 其他的功能都只暴露在本地端口, 通过VPN访问, 但是这并不适用于博客, 毕竟博客的初衷就是大家都能看到(虽然也没人看就是了).</p>
+<p>第二个就是自己写的博客框架过于简陋了点, 导致写起来很不爽, 最近又发现了<a href="https://quarto.org/">Quarto</a>这个好东西, 于是决定迁移到Quarto上来, 刚好Quarto也支持博客功能.</p>
+<section id="服务商选择" class="level2">
+<h2 class="anchored" data-anchor-id="服务商选择">服务商选择</h2>
+<p>部署博客网站的服务商有很多选择, 综合价格(或者说白嫖额度)和国内访问速度来看, Cloudflare是比较好的选择, 因此选择部署在Cloudflare Page上.</p>
+<p>图床也顺便从自己的服务器上迁移了出来, 也用的是Cloudflare的服务, 虽然Cloudflare的Image服务要收费, 但是R2储存功能有10G的免费额度, 同时免费流量(准确的说Cloudflare不按流量收费, 而是所谓的操作次数,也就是访问次数)也不像七牛云那样只支持HTTP.</p>
 </section>
-<section id="ssl及域名配置" class="level2">
-<h2 class="anchored" data-anchor-id="ssl及域名配置">SSL及域名配置</h2>
-<section id="域名和nginx配置" class="level3">
-<h3 class="anchored" data-anchor-id="域名和nginx配置">域名和Nginx配置</h3>
-<p>这次直接放弃对站点作CDN, 只在图片服务上用了CDN(<code>image.yqwu.site</code>).<br>
-目前使用了四个域名:</p>
-<ul>
-<li><code>yqwu.site</code>, 主站点, 用于挂一些时效性比较久/需要直接写<code>html</code>来实现一些特殊功能的(事实上没有).</li>
-<li><code>image.yqwu.site</code>, 图床, 由七牛云提供服务.</li>
-<li><code>git.yqwu.site</code>, 个人的Git仓库, 基于gogs.</li>
-<li><code>blog.yqwu.site</code>, 博客站点, 实际上只是映射到了<code>yqwu.site</code>下的<code>blog</code>目录中.</li>
-</ul>
-<p>记录一下<code>blog.yqwu.site</code>的<code>Nginx</code>配置:</p>
-<pre><code># /etc/nginx/sites-available/blog.conf
-server {
-  listen 443 ssl;
-  server_name blog.yqwu.site;
-  root /var/www/html/blog;
-  index index.html index.htm;
-  location / {
-    try_files $uri $uri/ =404;
-  }
-}</code></pre>
-<p>以及<code>git.yqwu.site</code>的端口转发:</p>
-<pre><code># /etc/nginx/sites-available/git.conf
-server {
-  listen 443 ssl;
-  server_name git.yqwu.site;
-
-  location / {
-    proxy_pass https://yqwu.site:3000;
-  }
-}</code></pre>
-<p><code>gogs</code>不需要什么额外的配置, 只需要正确的指定证书文件就可以了.</p>
+<section id="技术细节" class="level2">
+<h2 class="anchored" data-anchor-id="技术细节">技术细节</h2>
+<section id="博客部署" class="level3">
+<h3 class="anchored" data-anchor-id="博客部署">博客部署</h3>
+<p>这套方案最大的问题就是Cloudflare Page不像Github Page那样有Github Action的支持, 同时也不原生支持Quarto框架, 这导致部署环境并编译到静态网页很麻烦. 因此选择使用Github Action, 先部署到Github Page, 然后Cloudflare Page的储存库指向Github Page分支即可, 构建设置全部留空即可 <img src="https://image.yqwu.site/2022-12-01_20-12.png" class="img-fluid" alt="Cloudflare Page设置示例"></p>
+<p>Github Action方面, 参考Quarto官方提供的<a href="https://github.com/quarto-dev/quarto-actions">示例仓库</a>, 同时由于我主要使用的是Julia, 需要手动配置一下环境, 这样才能正确渲染出代码输出(你也可以选择不在云端重新计算, 直接使用本地计算结果), 流程如下:</p>
+<pre class="{toml}"><code>      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install jupyter
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: 1.8
+      - run: julia -e 'using Pkg;deps=readlines("requirements.txt");for dep in deps Pkg.add(dep) end'
+      - name: Publish to GitHub Pages (and render)
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}</code></pre>
+<p>值得注意的点是, 由于Julia目前对虚拟环境的支持没有Python那么好, 因此我选择手动将所有需要的库写入<code>requirements.txt</code>中, 然后依次安装.</p>
 </section>
-<section id="ssl证书" class="level3">
-<h3 class="anchored" data-anchor-id="ssl证书">SSL证书</h3>
-<p>同时, 对于SSL这个上次最重要的问题, 这次我是用<a href="https://certbot.eff.org/">certbot</a>申请的<a href="https://letsencrypt.org/">let’s encrypt</a> 的证书, 吸取上次的经验, 这次申请一个主域名<code>yqwu.site</code>和一个泛域名<code>*.yqwu.site</code>的证书. 唯一的缺点就是<code>certbot</code>不支持泛域名的自动 续签. 不过泛域名的优点远大于每三个月自己手动续签一次的麻烦了.</p>
+<section id="https" class="level3">
+<h3 class="anchored" data-anchor-id="https">HTTPS</h3>
+<p>Cloudflare为网站开启HTTPS后, Cloudflare会自动为你注册并续签一个<a href="https://letsencrypt.org/">Let’s Encrypt</a>的免费证书.</p>
 <blockquote class="blockquote">
-<p>谈一下为什么这次要申请泛域名. 一个就是方便管理, 避免后面再需要使用其他子域名的时候申请新的证书. 另外就是国内的几个CDN厂商 (点名七牛云,百度和阿里)都不支持<code>Let's encrypt</code>的证书(不是不支持加密, 是不支持转发来实习自动续签). 因此自动续签总是出问题. 所以不如直接用泛域名.</p>
+<p>P.S. 如果你需要开启HTTPS的不是Cloudflare Page这类的第三方托管的服务, 而是来自你的服务器的内容, Cloudflare为你提供了自签名的为期10年的SSL证书, 你只需要在服务器上部署这个证书, 就能实现服务器到Cloudflare之间的加密, 而用户端到Cloudflare间的加密仍由Cloudflare注册并自动续签的证书负责.</p>
 </blockquote>
 </section>
-</section>
-<section id="网页编辑与发布" class="level2">
-<h2 class="anchored" data-anchor-id="网页编辑与发布">网页编辑与发布</h2>
-<section id="网页创作和生成" class="level3">
-<h3 class="anchored" data-anchor-id="网页创作和生成">网页创作和生成</h3>
-<p>这次没用啥博客框架了(我总是弄的加载很慢), 直接Markdown编写加<a href="https://www.pandoc.org/">Pandoc</a>转成HTML, 配个CSS和KaTeX, 基本的功能 是没啥问题, 还蛮方便(hexo的Markdown规范太严格了, 很多用法都不支持).<br>
-然后手撸了一个根据Blog文件夹下的Markdown文件生成博客主页的脚本, 用起来还行(虽然啥功能也没有, 但能插二刺螈图就够了).</p>
-</section>
-<section id="编辑与发布" class="level3">
-<h3 class="anchored" data-anchor-id="编辑与发布">编辑与发布</h3>
-<p>直接用<code>sshfs</code>把服务器目录挂载下来, 然后编辑和生成都在本地做就好了, 省的之前用<code>hexo</code>的时候本地生成了还要SCP传上去(不过也是因为我这个 脚本没啥大的文件IO, <code>hexo</code>那种复杂的框架在<code>sshfs</code>上跑估计不太行).</p>
-</section>
-<section id="版本管理" class="level3">
-<h3 class="anchored" data-anchor-id="版本管理">版本管理</h3>
-<p>Git, 脚本和源文件都放在一个<a href="https://github.com/yqwu905/PersonalSite">仓库</a>里. 设置忽略所有生成的<code>html</code>文件就行了.</p>
-</section>
-</section>
-<section id="something-else" class="level2">
-<h2 class="anchored" data-anchor-id="something-else">Something Else</h2>
-<ul>
-<li>这次给网站加了个License(虽然感觉没啥用):<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-SA</a>.</li>
-<li>暂时是不准备给这个简陋的博客”系统”加什么功能了, 反正能用就行, 可以美其名曰加载快速.</li>
-</ul>
+<section id="quarto设置" class="level3">
+<h3 class="anchored" data-anchor-id="quarto设置">Quarto设置</h3>
+<p>关于用Quarto来创作, 官方提供了很详细的<a href="https://quarto.org/docs/guide/">文档</a>, 同时,Albert Rapp也撰写了一篇很好的<a href="https://albert-rapp.de/posts/13_quarto_blog_writing_guide/13_quarto_blog_writing_guide.html">文章</a>, 详细的介绍了利用Quarto进行博客创作的各种细节与流程.</p>
 
 
 </section>
